@@ -1,0 +1,48 @@
+:root {
+  --background_vertical: url(/public/imgs/long_1.jpg);
+  --background_cube: url(/public/imgs/background_4.jpg);
+  --background_horizontal: url(/public/imgs/bg_aeri.jpg);
+
+}
+
+.bg-glass {
+  /* From https://css.glass */
+  background: rgba(111, 172, 241, 0.603);
+  border-radius: 16px;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(4.7px);
+  -webkit-backdrop-filter: blur(4.7px);
+  border: 1px solid rgba(141, 186, 242, 0.85);
+}
+
+.background {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	height: 100lvh;
+	z-index: -999999;
+	background: var(--background_horizontal);
+	background-repeat: no-repeat;
+	background-position: center;
+	background-size: cover;
+}
+/*
+@media (min-width: 400px) {
+  #intro {
+    background-image: url(--background);
+  }
+}
+
+@media (min-width: 400px) {
+  #intro {
+    background-image: url(--background);
+  }
+}
+
+@media (max-width: 300px) {
+  #intro {
+    background-image: url(--background_vertical);
+  }
+}

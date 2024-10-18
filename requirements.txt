@@ -1,0 +1,4 @@
+FastAPI[all]
+Uvicorn
+Typing
+Pydantic
