@@ -1,0 +1,30 @@
+.custom-nav-text {
+    text-decoration: none;
+    opacity: 1;
+    color: #fff;
+    font-size:1.6rem;
+}
+
+@media (max-width: 333px) {
+    main {
+        margin-top: 85px;
+    }
+}
+
+@media (min-width: 333px) {
+    main {
+        margin-top: 45px;
+    }
+}
+
+@media (max-width: 277px) {
+    main {
+        margin-top: 125px;
+    }
+}
+
+@media (min-width: 277px) and (max-width: 333px) {
+    main {
+        margin-top: 85px;
+    }
+}

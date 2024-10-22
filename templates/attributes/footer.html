@@ -2,53 +2,30 @@
 <link href="/static/css/footer.css" rel="stylesheet">
 {% endblock %}
 
-<footer>
-    <div class="container">
+<footer class="bg-glass">
+    <div class="container-lg">
         <div class="row">
-            <div class="col-sm-6 col-md-3 item">
-                <h3>Site Pages</h3>
-                <ul>
-                    <li><a href="/">Home page</a></li>
-                </ul>
-            </div>
-            <div class="col-md-6 item text">
+            <div class="col-md-9 item text">
                 <h3>Lorem Ipsum</h3>
                 <p>Lorem ipsum odor amet, consectetuer adipiscing elit. Primis lacinia aliquam libero felis fusce sed varius aliquet fermentum. Hac volutpat placerat vehicula sociosqu litora sapien vivamus. Convallis varius vitae felis mollis nisi. Mattis facilisis elit torquent, pulvinar aptent turpis laoreet penatibus. Dignissim nisl nostra ultrices ultrices ex; habitant purus gravida. Porta platea erat porta, efficitur sollicitudin purus.</p>
             </div>
-
-        </div>
-        <div class="col-md-2">
-            <h5 class="text-md-right">Contact Us</h5>
-            <hr>
-        </div>
-        <div class="col-md-5">
-            <form id="send_email" action="{{ url_for('Main') }}" method="post">
-                <fieldset class="form-group">
-                    <input class="form-control" id="Feedback_Email" placeholder="Geef E-mailadres" required type="email">
-                </fieldset>
-                <fieldset class="form-group">
-                    <textarea class="form-control" id="Feedback_Message" placeholder="Bericht" required></textarea>
-                </fieldset>
-                <fieldset class="form-group text-xs-right">
-                    <button class="white btn btn-secondary-outline btn-lg" onclick="submit_form()">Send</button>
-                </fieldset>
-                <script>
-                    function send_form() {
-                        let send = document.getElementById("send_email")
-                        send.submit()
-                    }
-
-                    function submit_form() {
-                        let email = document.getElementById("Feedback_Email")
-                        let message = document.getElementById("Feedback_Message")
-                        let next = document.getElementById("hidden_url")
-                        let send = document.getElementById("send_email")
-                        send.setAttribute('action', '/');
-                        send_form()
-                    }
-
-                </script>
-            </form>
+            <div class="col-md-3 item">
+                <h3>Site Pages</h3>
+                <ul>
+                    <li><a href="/">Home page</a></li>
+                    <li><a href="#">Enchanted Repository</a></li>
+                    <li><a href="#">Events</a></li>
+                    <li><a href="#">Memory Lane</a></li>
+                    <li><a href="#">Our Team</a></li>
+                </ul>
+            </div>
+            <div class="col item">
+                <h3>Contact Us</h3>
+                <ul>
+                    <li><a href="mailto:contact@dreamyskysanctuary.com">Via Email: contact@dreamyskysanctuary.com</a></li>
+                    <li><a href="https://discord.gg/">Our Discord: discord.gg/</a></li>
+                </ul>
+            </div>
         </div>
     </div>
 </footer>

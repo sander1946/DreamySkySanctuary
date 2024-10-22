@@ -1,7 +1,12 @@
+main {
+    margin-bottom: 80px;
+}
+
 footer {
-    padding: 50px 0;
+    padding: 20px 0;
     color: #f0f9ff;
     background-color: #282d32;
+    height: auto;
 }
 
 footer h3 {
@@ -19,13 +24,13 @@ footer ul {
     margin-bottom: 0;
 }
 
-footer ul a {
-    color: inherit;
+footer a {
     text-decoration: none;
     opacity: 0.6;
+    color: #fff;
 }
 
-footer ul a:hover {
+footer a:hover {
     opacity: 0.8;
 }
 
@@ -72,30 +77,6 @@ footer .item.social>a {
 
 footer .item.social>a:hover {
     opacity: 0.9;
-}
-
-footer .copyright {
-    text-align: center;
-    padding-top: 24px;
-    opacity: 0.3;
-    font-size: 13px;
-    margin-bottom: 0;
-}
-
-/* Taller footer on small screens */
-@media (max-width: 567em) {
-    main {
-        margin-bottom: 700px;
-    }
-
-    .footer {
-        height: 700px;
-    }
-}
-
-footer a {
-    color: #fff;
-    text-decoration: none;
 }
 
 footer .form-control {

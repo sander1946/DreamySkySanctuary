@@ -1,8 +1,5 @@
 :root {
-  --background_vertical: url(/public/imgs/long_1.jpg);
-  --background_cube: url(/public/imgs/background_4.jpg);
-  --background_horizontal: url(/public/imgs/bg_aeri.jpg);
-
+  --background_img: url(/public/imgs/bg_aeri.jpg);
 }
 
 .bg-glass {
@@ -10,9 +7,10 @@
   background: rgba(111, 172, 241, 0.603);
   border-radius: 16px;
   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-  backdrop-filter: blur(4.7px);
-  -webkit-backdrop-filter: blur(4.7px);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(10px);
   border: 1px solid rgba(141, 186, 242, 0.85);
+  color: #f0f9ff;
 }
 
 .background {
@@ -23,26 +21,66 @@
 	height: 100%;
 	height: 100lvh;
 	z-index: -999999;
-	background: var(--background_horizontal);
+	background: var(--background_img);
 	background-repeat: no-repeat;
 	background-position: center;
 	background-size: cover;
+  background-color: grey;
 }
-/*
-@media (min-width: 400px) {
-  #intro {
-    background-image: url(--background);
+
+.youtube-iframe {
+  padding-top: 12px;
+  padding-bottom: 12px;
+  margin: 0 auto;
+}
+
+.youtube-iframe iframe {
+  display: block;
+  border-style:none;
+}
+
+@media (max-width: 750px) {
+  .youtube-iframe {
+    width: 100%;
   }
 }
 
-@media (min-width: 400px) {
-  #intro {
-    background-image: url(--background);
+@media (min-width: 740px) {
+  .youtube-iframe {
+    width: 725px;
   }
 }
 
-@media (max-width: 300px) {
-  #intro {
-    background-image: url(--background_vertical);
+#myDIV div {
+  background-color: rgba(255, 255, 255, 0.8);
+  text-align: center;
+  padding: 20px 0;
+  font-size: 30px;
+}
+.youtube-div {
+  grid-area: Item1;
+}
+.announcement-div {
+  grid-area: Item2;
+}
+.us-div {
+  grid-area: Item3;
+}
+
+@media (max-width: 750px) {
+  #myDIV {
+    display: grid;
+    gap: 0px;
+    background-color: #2196f3;
+    grid-template-areas: 'Item1 Item2' 'Item3 Item2';
+  }
+}
+
+@media (min-width: 740px) {
+  #myDIV {
+    display: grid;
+    gap: 0px;
+    background-color: #2196f3;
+    grid-template-areas: 'Item1' 'Item2' 'Item3';
   }
 }
