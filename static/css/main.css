@@ -2,6 +2,12 @@
   --background_img: url(/public/imgs/bg_aeri.jpg);
 }
 
+.row {
+  margin-left: 0px;
+  margin-right: 0px;
+  margin-top: 6px;
+}
+
 .bg-glass {
   /* From https://css.glass */
   background: rgba(111, 172, 241, 0.603);

@@ -2,7 +2,13 @@
     text-decoration: none;
     opacity: 1;
     color: #fff;
-    font-size:1.6rem;
+    font-size:1.5rem;
+}
+
+.custom-nav-item {
+    text-decoration: none;
+    opacity: 1;
+    color: #ffffffcc;
 }
 
 @media (max-width: 333px) {
