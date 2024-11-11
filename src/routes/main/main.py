@@ -78,5 +78,5 @@ async def team(request: Request, response: Response):
         return_data, _ = await fetch_by_id(_id)
         lumi_data.append(return_data["user"])
         lumi_info = "The community event holders!"
-    team_data = {"Sanctuary Keeper": (owner_data, owner_info), "celestial": (celestial_data, celestial_info), "guardian": (guardian_data, guardian_info), "tech": (tech_data, tech_info), "lumi": (lumi_data, lumi_info)}
+    team_data = {"owner": (owner_data, owner_info, "Sanctuary Keeper"), "celestial": (celestial_data, celestial_info, "Celestial Guardian"), "guardian": (guardian_data, guardian_info), "tech": (tech_data, tech_info, "Tech Oracle"), "lumi": (lumi_data, lumi_info, "Event Luminary")}
     return templates.TemplateResponse(name="main/team.html", context={"request": request, "team_data": team_data})

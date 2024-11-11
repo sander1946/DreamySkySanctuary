@@ -13,7 +13,7 @@
   {% if team_data %}
     {% for role in team_data.keys() %}
       <div class="{{ role }} bg-glass">
-        {{ role }}
+        {{ team_data[role].2 }}
         {{ team_data[role].1 }}
         {% for user in team_data[role].0 %}
           <div class="{{ role }}-info user-info">
@@ -29,78 +29,5 @@
       </div>
     {% endfor %}
   {% endif %}
-  <!--
-  <div class="owner bg-glass">
-    {% if owner %}
-    {% for user in owner %}
-    <div class="owner-info user-info">
-      <div class="owner-avatar user-avatar">
-        <img src="{{ user.avatar }}" alt="Owner Avatar">
-      </div>
-      <div class="owner-name">
-        <h1>{{ user.name }}</h1>
-      </div>
-    </div>
-    {% endfor %}
-    {% endif %}
-  </div>
-  <div class="celestial bg-glass">
-    {% if celestial %}
-    {% for user in celestial %}
-    <div class="celestial-info user-info">
-      <div class="celestial-avatar user-avatar">
-        <img src="{{ user.avatar }}" alt="Celestial Avatar">
-      </div>
-      <div class="celestial-name">
-        <h1>{{ user.name }}</h1>
-      </div>
-    </div>
-    {% endfor %}
-    {% endif %}
-  </div>
-  <div class="guardian bg-glass">
-    {% if guardian %}
-    {% for user in guardian %}
-    <div class="guardian-info user-info">
-      <div class="guardian-avatar user-avatar">
-        <img src="{{ user.avatar }}" alt="Guardian Avatar">
-      </div>
-      <div class="guardian-name">
-        <h1>{{ user.name }}</h1>
-      </div>
-    </div>
-    {% endfor %}
-    {% endif %}
-  </div>
-  <div class="tech bg-glass">
-    {% if tech %}
-    {% for user in tech %}
-    <div class="tech-info user-info">
-      <div class="tech-avatar user-avatar">
-        <img src="{{ user.avatar }}" alt="Tech Avatar">
-      </div>
-      <div class="tech-name">
-        <h1>{{ user.name }}</h1>
-      </div>
-    </div>
-    {% endfor %}
-    {% endif %}
-  </div>
-  <div class="lumi bg-glass">
-    {% if lumi %}
-    {% for user in lumi %}
-    <div class="lumi-info user-info">
-      <div class="lumi-avatar user-avatar">
-        <img src="{{ user.avatar }}" alt="Lumi Avatar">
-      </div>
-      <div class="lumi-name">
-        <h1>{{ user.display_name }}</h1>
-        <h2>{{ user.username }}</h2>
-      </div>
-    </div>
-    {% endfor %}
-    {% endif %}
-  </div>
-  -->
 </main>
 {% endblock %}
