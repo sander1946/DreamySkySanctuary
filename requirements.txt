@@ -2,3 +2,4 @@ FastAPI[all]
 Uvicorn
 Typing
 Pydantic
+discord

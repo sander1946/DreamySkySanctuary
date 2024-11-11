@@ -66,18 +66,11 @@
 }
 
 .main-grid {
-  margin-top: 60px;
   display: grid;
   gap: 15px;
   padding: 10px;
   width: 98vw;
-
-}
-
-@media (max-width: 1000px) {
-  .main-grid {
-    grid-template-areas: 'Youtube' 'Announcement' 'Us';
-  }
+  grid-template-areas: 'Youtube' 'Announcement' 'Us';
 }
 
 @media (min-width: 1000px) and (max-width: 1200px) {

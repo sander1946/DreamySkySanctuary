@@ -11,26 +11,26 @@
     color: #ffffffcc;
 }
 
-@media (max-width: 333px) {
+@media (min-width: 315px) {
     main {
-        margin-top: 85px;
+        margin-top: 57px;
     }
 }
 
-@media (min-width: 333px) {
+@media (min-width: 260px) and (max-width: 315px) {
     main {
-        margin-top: 45px;
+        margin-top: 95px;
     }
 }
 
-@media (max-width: 277px) {
+@media (min-width: 150px) and (max-width: 260px) {
     main {
-        margin-top: 125px;
+        margin-top: 132px;
     }
 }
 
-@media (min-width: 277px) and (max-width: 333px) {
+@media (max-width: 150px) {
     main {
-        margin-top: 85px;
+        margin-top: 168px;
     }
 }

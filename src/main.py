@@ -14,4 +14,5 @@ templates = Jinja2Templates(directory=config.TEMPLATES_DIR)
 
 
 app.include_router(main_route.router)
+app.include_router(bot_route.router)
 # app.include_router(auth_route.router)

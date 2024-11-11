@@ -1,0 +1,39 @@
+@import url(/static/css/main.css);
+
+.user-info {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas: 'User User';
+    gap: 10px;
+    margin: 10px;
+}
+
+.user-avatar img {
+    width: 100px;
+    height: 100px;
+    border-radius: 40%;
+}
+
+.owner {
+    grid-area: owner;
+}
+
+.celestial {
+    grid-area: celestial;
+}
+
+.guardian {
+    grid-area: guardian;
+}
+
+.tech {
+    grid-area: tech;
+}
+
+.lumi {
+    grid-area: lumi;
+}
+
+.main-grid {
+    grid-template-areas: 'owner' 'celestial' 'guardian' 'tech' 'lumi'
+}

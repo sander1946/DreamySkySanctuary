@@ -10,72 +10,97 @@
 {% block content %}    
 <div class="background"></div>
 <main class="main-grid">
-  <div class="youtube bg-glass text-center">
-    <!-- Content -->
-    <div class="row row-cols-1">
-      <div class="col youtube-iframe">
-        <div class="ratio ratio-16x9">
-          <iframe
-            src="https://www.youtube-nocookie.com/embed/1d-c6IWJHaE?si=FKdKB6KbZhhxd0jm"
-            title="YouTube video player"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-            referrerpolicy="strict-origin-when-cross-origin"
-            allowfullscreen
-          ></iframe>
-        </div>
+  {% if team_data %}
+    {% for role in team_data.keys() %}
+      <div class="{{ role }} bg-glass">
+        {{ role }}
+        {{ team_data[role].1 }}
+        {% for user in team_data[role].0 %}
+          <div class="{{ role }}-info user-info">
+            <div class="{{ role }}-avatar user-avatar">
+              <img src="{{ user.avatar }}" alt="{{ role }} Avatar">
+            </div>
+            <div class="{{ role }}-name">
+              <h1>{{ user.display_name }}</h1>
+              <h2>{{ user.username }}</h2>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    {% endfor %}
+  {% endif %}
+  <!--
+  <div class="owner bg-glass">
+    {% if owner %}
+    {% for user in owner %}
+    <div class="owner-info user-info">
+      <div class="owner-avatar user-avatar">
+        <img src="{{ user.avatar }}" alt="Owner Avatar">
+      </div>
+      <div class="owner-name">
+        <h1>{{ user.name }}</h1>
       </div>
     </div>
-    <div class="row">
-      <div class="col">
-        <h5>
-          Explore the worders of Sky: Children of the Light with our vibrant
-          community.
-        </h5>
-      </div>
-    </div>
+    {% endfor %}
+    {% endif %}
   </div>
-
-  <div class="announcement bg-glass">
-    
-    <div class="row">
-      <div class="col">
-        <h1 class="display-6">Latest form the Sanctuary</h1>
-        {% if announcements %}
-          {% for announcement in announcements %}
-            {% if announcement.image %}<img src="{{ announcement.image }}" width="100px" height="auto">{% endif %}
-              <hr>
-              <h4>{{ announcement.title }}</h4>
-              <p class="lead">{{ announcement.description }}</p>
-              {% if announcement.author %}<p class="lead">Posted by: {{ announcement.author }}</p>{% endif %}
-              <p class="lead">Posted on: {{ announcement.date }}</p>
-            {% else %}
-              <hr>
-              <h4>No Announcements</h4>
-              <p class="lead">There are no announcements at the moment.</p>
-          {% endfor %}
-        {% endif %}
+  <div class="celestial bg-glass">
+    {% if celestial %}
+    {% for user in celestial %}
+    <div class="celestial-info user-info">
+      <div class="celestial-avatar user-avatar">
+        <img src="{{ user.avatar }}" alt="Celestial Avatar">
+      </div>
+      <div class="celestial-name">
+        <h1>{{ user.name }}</h1>
       </div>
     </div>
+    {% endfor %}
+    {% endif %}
   </div>
-
-  <div class="us bg-glass">
-    <div class="row">
-      <div class="col-md-10">
-        <h1 class="display-4">Who Are We?</h1>
-        <p class="lead">
-          Lorem ipsum odor amet, consectetuer adipiscing elit. Primis sapien
-          parturient ac scelerisque erat. Mollis inceptos semper purus quis
-          nostra. Proin accumsan lacus phasellus himenaeos metus nibh. Nostra
-          nisi mollis nostra penatibus senectus nibh facilisi iaculis accumsan.
-          Vel nisl taciti in rhoncus feugiat porttitor. Tincidunt maecenas
-          taciti iaculis nullam tincidunt proin. Mus dignissim luctus dapibus
-          ornare pretium ut. Semper praesent nascetur mattis magna elit. Etiam
-          etiam lobortis mauris vitae habitant dignissim vulputate vulputate
-          ornare. Suscipit commodo senectus mattis sollicitudin ridiculus dictum
-          ad. Fringilla eros molestie dapibus vehicula litora.
-        </p>
+  <div class="guardian bg-glass">
+    {% if guardian %}
+    {% for user in guardian %}
+    <div class="guardian-info user-info">
+      <div class="guardian-avatar user-avatar">
+        <img src="{{ user.avatar }}" alt="Guardian Avatar">
+      </div>
+      <div class="guardian-name">
+        <h1>{{ user.name }}</h1>
       </div>
     </div>
+    {% endfor %}
+    {% endif %}
   </div>
+  <div class="tech bg-glass">
+    {% if tech %}
+    {% for user in tech %}
+    <div class="tech-info user-info">
+      <div class="tech-avatar user-avatar">
+        <img src="{{ user.avatar }}" alt="Tech Avatar">
+      </div>
+      <div class="tech-name">
+        <h1>{{ user.name }}</h1>
+      </div>
+    </div>
+    {% endfor %}
+    {% endif %}
+  </div>
+  <div class="lumi bg-glass">
+    {% if lumi %}
+    {% for user in lumi %}
+    <div class="lumi-info user-info">
+      <div class="lumi-avatar user-avatar">
+        <img src="{{ user.avatar }}" alt="Lumi Avatar">
+      </div>
+      <div class="lumi-name">
+        <h1>{{ user.display_name }}</h1>
+        <h2>{{ user.username }}</h2>
+      </div>
+    </div>
+    {% endfor %}
+    {% endif %}
+  </div>
+  -->
 </main>
 {% endblock %}
