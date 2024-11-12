@@ -8,9 +8,8 @@ The Website for the Dreamy Sky Sanctuary server
 2. Create a vitual environment for the python project: `python -m venv .venv`
 3. Activate the virtual environment: `./.venv/Script/activate` (or `source ./.venv/bin/activate` if you are on linux)
 4. Install the python requirements: `pip install -r requirements.txt`
-5. Go into the `src` folder: `cd src\`
-6. Start the webserver: `uvicorn main:app`
-7. The webserver should be running on `http://localhost` on port `80`
+5. Start the webserver: `uvicorn src.main:app --port 80 --host 0.0.0.0` or `run.bat` if on windows
+6. The webserver should be running on `http://localhost` on port `80`
 
 ## File structure
 

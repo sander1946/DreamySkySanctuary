@@ -47,6 +47,9 @@ async def enchamemorynted(request: Request, response: Response):
 
 @router.get("/team", include_in_schema=True)
 async def team(request: Request, response: Response):
+    if os.path.exists("team.json"):
+        team_data = json.loads(open("team.json", "r").read())
+        return templates.TemplateResponse(name="main/team.html", context={"request": request, "team_data": team_data})
     response.status_code = status.HTTP_200_OK
     owner_id = [529007366365249546]
     owner_data = []
@@ -78,5 +81,8 @@ async def team(request: Request, response: Response):
         return_data, _ = await fetch_by_id(_id)
         lumi_data.append(return_data["user"])
         lumi_info = "The community event holders!"
-    team_data = {"owner": (owner_data, owner_info, "Sanctuary Keeper"), "celestial": (celestial_data, celestial_info, "Celestial Guardian"), "guardian": (guardian_data, guardian_info), "tech": (tech_data, tech_info, "Tech Oracle"), "lumi": (lumi_data, lumi_info, "Event Luminary")}
+    team_data = {"owner": (owner_data, owner_info, "Sanctuary Keeper"), "celestial": (celestial_data, celestial_info, "Celestial Guardian"), "guardian": (guardian_data, guardian_info, "Sky Guardian"), "tech": (tech_data, tech_info, "Tech Oracle"), "lumi": (lumi_data, lumi_info, "Event Luminary")}
+    
+    open("team.json", "w").write(json.dumps(team_data, indent=4))
+    
     return templates.TemplateResponse(name="main/team.html", context={"request": request, "team_data": team_data})
