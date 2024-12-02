@@ -11,7 +11,7 @@ async def lifespan(app: FastAPI):
     # Load the ML model
     asyncio.create_task(client.start(config.TOKEN))
     yield
-    client.close()
+    await client.close()
 
 
 router = APIRouter(

@@ -8,3 +8,6 @@ discord
 typing_inspect
 python-dotenv
 audioop-lts
+python-multipart
+hashids
+shutils
