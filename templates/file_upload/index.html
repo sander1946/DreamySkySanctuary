@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block custom_css %}
+<!-- Bootstrap CSS -->
+<link href="/static/css/bootstrap/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="/static/icons/font/bootstrap-icons.css">
+<link href="/static/css/main.css" rel="stylesheet">
+{% endblock %}
+
+{% block content %}    
+<div class="background"></div>
+<main class="main-grid">
+  <div class="upload bg-glass text-center">
+    <!-- Upload Form -->
+    <form id="upload_image" action="./" method="POST" enctype="multipart/form-data">
+      <div class="mb-3 row">
+          <div class="col-auto">
+              <input class="form-control" type="file" name="images" accept="{{ allowed_types }}" multiple required>
+          </div>
+          <div class="col-auto">
+              <button type="submit" value="Upload" class="btn btn-primary mb-3">Upload Images</button>
+          </div>
+      </div>
+  </form>
+  </div>
+
+  <div class="viewer bg-glass">
+    <!-- Display the converted images -->
+    {% if files %}
+      <h2>Converted Images:</h2>
+      <div class="row row-cols-3 row-cols-auto">
+          {% for file in files %}
+              <div class="col" style="max-width: 256px;">
+                  <div class="card text-center">
+                      <img src="{{ file.image_url }}" class="card-img-top" alt="Converted Image" style="width: 100%; height: auto; max-width: 256px;">
+                      <div class="card-body">
+                          <h5 class="card-title">Uploaded File: {{ file.original_filename }}</h5>
+                          <p class="card-text">Original Content Type: {{ file.content_type }}</p>
+                          <a href="./download/{{ file.saved_filename }}" class="btn btn-success">Download {{ file.image_extension }}</a>
+                          <button type="button" class="btn btn-secondary"
+                                  onclick="var full_path = window.location.origin + '/up/download/{{ file.saved_filename }}'; copyToClipboard(full_path, this);">
+                                  <i class="bi bi-clipboard" aria-hidden="true"></i> Copy Download URL
+                          </button>
+                      </div>
+                  </div>
+              </div>
+          {% endfor %}
+      </div>
+  {% endif %}
+  </div>
+
+  <script src="/static/js/upload.js"></script>
+
+</main>
+{% endblock %}
