@@ -1,5 +1,10 @@
-FastAPI[all]
-Uvicorn
-Typing
-Pydantic
+fastapi
+fastapi_utils
+pydantic
+uvicorn
+typing
+jinja2
 discord
+typing_inspect
+python-dotenv
+audioop-lts
