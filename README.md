@@ -75,3 +75,7 @@ Go in your browser to `http://localhost/docs` to see the auto-generated document
 ## License
 
 This project is licensed with the [GNU GENERAL PUBLIC LICENSE](https://github.com/sander1946/DreamySkySanctuary?tab=GPL-3.0-1-ov-file).
+
+# TODO
+
+<https://medium.com/@seymaaozlerr/building-an-authentication-system-with-fastapi-redis-and-mysql-cc8b005b9c30>
