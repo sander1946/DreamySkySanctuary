@@ -1,3 +1,4 @@
 @echo off
 
-uvicorn src.main:app --port 80 --host 0.0.0.0 --reload
+docker build . -t dss.com
+docker run -p 80:8000 dss.com
