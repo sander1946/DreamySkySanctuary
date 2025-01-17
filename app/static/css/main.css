@@ -61,6 +61,12 @@
 .announcement {
   grid-area: Announcement;
 }
+
+.announcement a {
+  text-decoration: none;
+  opacity: 0.6;
+  color: #fff;
+}
 .us {
   grid-area: Us;
 }
