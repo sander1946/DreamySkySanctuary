@@ -39,97 +39,90 @@
 }
 
 .lumi {
+    display: grid;
     grid-area: lumi;
+    grid-template-areas: 
+    'lumi-title'
+    'lumi-left'
+    'lumi-right';
+}
+
+.lumi-left {
+    grid-area: lumi-left;
+}
+
+.lumi-right {
+    grid-area: lumi-right;
 }
 
 .main-grid {
     grid-template-areas:
-    'owner    celestial' 
-    'guardian lumi     ' 
-    'tech     lumi     ';
+    'owner     celestial' 
+    'guardian  lumi     ' 
+    'tech      lumi     ';
     grid-template-columns: 50% 50%;
     gap: 12px;
 }
 
-/* @media (min-width: 1000px) and (max-width: 1200px) {
-    .main-grid {
-        grid-template-columns: auto 300px;
-        grid-template-areas: 'Youtube Announcement' 'Us Announcement';
-    }
-} */
-
-/* @media (min-width: 1200px) and (max-width: 1400px) {
-    .main-grid {
-        grid-template-columns: auto 450px;
-        grid-template-areas: 'Youtube Announcement' 'Us Announcement';
-    }
-} */
-
-@media (min-width: 1200px){
+@media (min-width: 1700px){
     .main-grid {
         grid-template-areas:
-        'owner    celestial tech' 
-        'lumi     guardian  filler' 
-        'lumi     fillertwo filler';
-        grid-template-columns: auto auto auto;
+        'filler  owner    celestial  tech      fillertwo' 
+        'filler  lumi     lumi       guardian  fillertwo';
+        grid-template-columns: auto 550px 550px 550px auto;
+    }
+    .lumi {
+        grid-template-areas: 
+        'lumi-title lumi-title'
+        'lumi-left  lumi-right';
     }
 } 
 
-@media (min-width: 900px) and (max-width: 1200px) {
+@media (min-width: 1240px) and (max-width: 1700px){
     .main-grid {
         grid-template-areas:
-        'owner    celestial' 
-        'guardian lumi     ' 
-        'tech     lumi     ';
+        'owner    celestial  tech' 
+        'lumi     lumi       guardian';
+        grid-template-columns: auto auto auto;
+    }
+    .lumi {
+        grid-template-areas: 
+        'lumi-title lumi-title'
+        'lumi-left  lumi-right';
+    }
+} 
+
+@media (min-width: 900px) and (max-width: 1240px) {
+    .main-grid {
+        grid-template-areas:
+        'owner     celestial' 
+        'guardian  lumi     ' 
+        'tech      lumi     ';
         grid-template-columns: 50% 50%;
     }
 } 
 
-@media (min-width: 800px) and (max-width: 900px) {
+@media (min-width: 620px) and (max-width: 900px) {
     .main-grid {
         grid-template-areas:
-        'filler owner     fillertwo'
-        'filler celestial fillertwo' 
-        'filler guardian  fillertwo'
-        'filler tech      fillertwo'
-        'filler lumi      fillertwo' ;
-        grid-template-columns: auto 70% auto;
+        'filler  owner     fillertwo'
+        'filler  celestial fillertwo' 
+        'filler  guardian  fillertwo'
+        'filler  tech      fillertwo'
+        'filler  lumi      fillertwo' ;
+        grid-template-columns: auto 600px auto;
     }
 }
 
-@media (min-width: 515px) and (max-width: 800px) {
+@media (min-width: 420px) and (max-width: 620px) {
     .main-grid {
         grid-template-areas:
-        'filler owner     fillertwo'
-        'filler celestial fillertwo' 
-        'filler guardian  fillertwo'
-        'filler tech      fillertwo'
-        'filler lumi      fillertwo' ;
-        grid-template-columns: auto 80% auto;
-    }
-}
-
-@media (min-width: 470px) and (max-width: 515px) {
-    .main-grid {
-        grid-template-areas:
-        'filler owner     fillertwo'
-        'filler celestial fillertwo' 
-        'filler guardian  fillertwo'
-        'filler tech      fillertwo'
-        'filler lumi      fillertwo' ;
-        grid-template-columns: auto 90% auto;
-    }
-}
-
-@media (min-width: 420px) and (max-width: 470px) {
-    .main-grid {
-        grid-template-areas:
-        'owner    '
-        'celestial' 
-        'guardian '
-        'tech     '
-        'lumi     ' ;
-        grid-template-columns: 100%;
+        'filler  owner     fillertwo'
+        'filler  celestial fillertwo' 
+        'filler  guardian  fillertwo'
+        'filler  tech      fillertwo'
+        'filler  lumi      fillertwo' ;
+        grid-template-columns: auto 400px auto;
     }
 }
 

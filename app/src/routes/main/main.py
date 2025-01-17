@@ -61,6 +61,8 @@ async def team(request: Request, response: Response):
     tech_data = []
     lumi_id = [628517615270363137, 1218643132363702352, 971730515256287303, 713397233936105532, 593568851203981324, 1055723680979746896]
     lumi_data = []
+    left_lumi = []
+    right_lumi = []
     for _id in owner_id:
         return_data, _ = await fetch_by_id(_id)
         owner_data.append(return_data["user"])
@@ -77,11 +79,15 @@ async def team(request: Request, response: Response):
         return_data, _ = await fetch_by_id(_id)
         tech_data.append(return_data["user"])
         tech_info = "The one who manages the bot!"
-    for _id in lumi_id:
-        return_data, _ = await fetch_by_id(_id)
-        lumi_data.append(return_data["user"])
+    for i in range(len(lumi_id)):
+        return_data, _ = await fetch_by_id(lumi_id[i])
+        if i % 2 == 0:
+            left_lumi.append(return_data["user"])
+        else:
+            right_lumi.append(return_data["user"])
         lumi_info = "The community event holders!"
-    team_data = {"owner": (owner_data, owner_info, "Sanctuary Keeper"), "celestial": (celestial_data, celestial_info, "Celestial Guardian"), "guardian": (guardian_data, guardian_info, "Sky Guardian"), "tech": (tech_data, tech_info, "Tech Oracle"), "lumi": (lumi_data, lumi_info, "Event Luminary")}
+        
+    team_data = {"owner": (owner_data, owner_info, "Sanctuary Keeper"), "celestial": (celestial_data, celestial_info, "Celestial Guardian"), "guardian": (guardian_data, guardian_info, "Sky Guardian"), "tech": (tech_data, tech_info, "Tech Oracle"), "lumi": ({"left": left_lumi,"right": right_lumi}, lumi_info, "Event Luminary")}
     
     open("team.json", "w").write(json.dumps(team_data, indent=4))
     

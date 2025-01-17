@@ -13,20 +13,53 @@
   {% if team_data %}
     {% for role in team_data.keys() %}
       <div class="{{ role }} bg-glass">
-        <h1 class="text-center">{{ team_data[role].2 }}</h1>
-        <h4 class="text-center">{{ team_data[role].1 }}</h4>
-        {% for user in team_data[role].0 %}
-          <div class="row row-cols-2 {{ role }}-info user-info">
-            <hr class="col-12">
-            <div class="col-auto {{ role }}-avatar user-avatar">
-              <img src="{{ user.avatar }}" alt="{{ role }} Avatar">
-            </div>
-            <div class="col-auto {{ role }}-name user-name">
-              <h2 class="user-name-text">{{ user.display_name }}</h2>
-              <h5 class="user-name-text">{{ user.username }}</h5>
-            </div>
+        <div class="{{ role }}-title">
+          <h1 class="text-center">{{ team_data[role].2 }}</h1>
+          <h4 class="text-center">{{ team_data[role].1 }}</h4>
+        </div>
+        {% if team_data[role].0 is mapping %}
+          <div class="{{ role }}-left">
+            {% for user in team_data[role].0.left %}
+              <div class="row row-cols-2 {{ role }}-info user-info">
+                <hr class="col-12">
+                <div class="col-auto {{ role }}-avatar user-avatar">
+                  <img src="{{ user.avatar }}" alt="{{ role }} Avatar">
+                </div>
+                <div class="col-auto {{ role }}-name user-name">
+                  <h2 class="user-name-text">{{ user.display_name }}</h2>
+                  <h5 class="user-name-text">{{ user.username }}</h5>
+                </div>
+              </div>
+            {% endfor %}
           </div>
-        {% endfor %}
+          <div class="{{ role }}-right">
+            {% for user in team_data[role].0.right %}
+              <div class="row row-cols-2 {{ role }}-info user-info">
+                <hr class="col-12">
+                <div class="col-auto {{ role }}-avatar user-avatar">
+                  <img src="{{ user.avatar }}" alt="{{ role }} Avatar">
+                </div>
+                <div class="col-auto {{ role }}-name user-name">
+                  <h2 class="user-name-text">{{ user.display_name }}</h2>
+                  <h5 class="user-name-text">{{ user.username }}</h5>
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+        {% else %}
+          {% for user in team_data[role].0 %}
+            <div class="row row-cols-2 {{ role }}-info user-info">
+              <hr class="col-12">
+              <div class="col-auto {{ role }}-avatar user-avatar">
+                <img src="{{ user.avatar }}" alt="{{ role }} Avatar">
+              </div>
+              <div class="col-auto {{ role }}-name user-name">
+                <h2 class="user-name-text">{{ user.display_name }}</h2>
+                <h5 class="user-name-text">{{ user.username }}</h5>
+              </div>
+            </div>
+          {% endfor %}
+        {% endif %}
       </div>
     {% endfor %}
   {% endif %}
