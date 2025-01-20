@@ -16,7 +16,7 @@ async def main(request: Request, response: Response):
     string_types = ""
     for type in config.ALLOWED_FILE_TYPES:
         string_types += f"{type}, "
-    return templates.TemplateResponse(name="file_upload/index.html", context={"request": request, "allowed_types": string_types})
+    return templates.TemplateResponse(name="main/upload.html", context={"request": request, "allowed_types": string_types})
 
 
 @router.post("/", include_in_schema=True)
@@ -41,11 +41,11 @@ async def upload_file(request: Request, images: List[UploadFile] = File(...)):
             'saved_filename': filename,
             'content_type': image.content_type,
             'path': save_path,
-            'image_url': f"/upload/{filename}",
+            'image_url': f"/images/{filename}",
         })
         
     return templates.TemplateResponse(
-        name="file_upload/index.html", 
+        name="main/upload.html", 
         context={
             "request": request,
             "files": saved_files,

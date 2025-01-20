@@ -24,7 +24,7 @@ async def main(request: Request, response: Response):
         date = datetime.now() - timedelta(days=1),
         image = "/public/imgs/flags/en.png"),
     ]
-    return templates.TemplateResponse(name="main/index.html", context={"request": request, "announcements": announcements})
+    return templates.TemplateResponse(name="main/main.html", context={"request": request, "announcements": announcements})
 
 
 @router.get("/enchanted", include_in_schema=True)
