@@ -4,7 +4,7 @@
 <!-- Bootstrap CSS -->
 <link href="/static/css/bootstrap/bootstrap.min.css" rel="stylesheet">
 <link rel="stylesheet" href="/static/icons/font/bootstrap-icons.css">
-<link href="/static/css/main.css" rel="stylesheet">
+<link href="/static/css/upload.css" rel="stylesheet">
 {% endblock %}
 
 {% block content %}    
@@ -12,6 +12,7 @@
 <main class="main-grid">
   <div class="upload bg-glass text-center">
     <!-- Upload Form -->
+    <h1 class="text-center">Upload Your Images:</h1>
     <form id="upload_image" action="./" method="POST" enctype="multipart/form-data">
       <div class="mb-3 row">
           <div class="col-auto">
@@ -26,8 +27,8 @@
 
   <div class="viewer bg-glass">
     <!-- Display the converted images -->
+    <h2 class="text-center">Converted Images:</h2>
     {% if files %}
-      <h2>Converted Images:</h2>
       <div class="row row-cols-3 row-cols-auto">
           {% for file in files %}
               <div class="col" style="max-width: 256px;">
