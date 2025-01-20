@@ -1,11 +1,34 @@
 @import url(/static/css/main.css);
 
+.width25 {
+    width: 25%;
+}
+
+.width100 {
+    width: 100%;
+}
+
 .upload {
     grid-area: Upload;
 }
 
 .viewer {
     grid-area: Viewer;
+}
+
+.custom-size-input {
+    display: none;
+}
+
+.upload-preview {
+    max-width: 200px;
+    width: 100%;
+    height: 120px;
+    background-size: contain;
+    background-position: 50% 50%;
+    background-repeat: no-repeat;
+    margin: 6px;
+    padding: 0px;
 }
 
 .main-grid {

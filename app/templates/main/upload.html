@@ -8,49 +8,90 @@
 {% endblock %}
 
 {% block content %}    
-<div class="background"></div>
+<div class="background">
+</div>
+
 <main class="main-grid">
-  <div class="upload bg-glass text-center">
-    <!-- Upload Form -->
-    <h1 class="text-center">Upload Your Images:</h1>
-    <form id="upload_image" action="./" method="POST" enctype="multipart/form-data">
-      <div class="mb-3 row">
-          <div class="col-auto">
-              <input class="form-control" type="file" name="images" accept="{{ allowed_types }}" multiple required>
-          </div>
-          <div class="col-auto">
-              <button type="submit" value="Upload" class="btn btn-primary mb-3">Upload Images</button>
-          </div>
-      </div>
-  </form>
-  </div>
+    <div class="upload bg-glass text-center">
+        <!-- Upload Form -->
+        <h1 class="text-center">Upload Your Images:</h1>
+        <form id="upload_image" action="./" method="POST" enctype="multipart/form-data">
+            <div class="col-sm-12" id="uploadControls">
+                <input type="hidden" name="gallery" id="gallery" value="">
+                <div class="row">
+                    <div class="col-sm-12 align-center">
+                        <select name="expire" id="expire" class="width100">
+                            <option value="0">No expiration date</option>
+                            <option value="1">Remove after 1 day</option>
+                            <option value="7">Remove after 7 days</option>
+                            <option value="31">Remove after 31 days</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12 align-center">
+                        <select name="imgsize" id="imgsize" class="width100">
+                            <option value="0" selected="">Keep the original dimentions</option>
+                            <option value="custom">Custom dimentions</option>
+                            <option value="1">934 x 282 Pixels (Carl level background)</option>
+                            <option value="2">512 x 512 Pixels (Discord Profile Picture)</option>
+                            <option value="3">960 x 540 Pixels (Discord Banner)</option>
+                            <option value="4">1920 x 1080 Pixels (HD)</option>
+                            <option value="5">3840 x 2160 Pixels (4K)</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="custom-size-input col-sm-12 align-center">
+                        <input type="number" min="1" name="width" id="width" class="width25" placeholder="Width">
+                        <input type="number" min="1" name="height" id="height" class="width25" placeholder="Height">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12 align-center" style="line-height:135%">
+                        <div id="upload-preview-container" class="width100 row row-cols-auto">
+                        </div>
+                        <input id="imgupload" class="form-control" type="file" name="images" onchange="loadFile(event)" accept="{{ allowed_types }}" multiple required style="display:none"/>
 
-  <div class="viewer bg-glass">
-    <!-- Display the converted images -->
-    <h2 class="text-center">Converted Images:</h2>
-    {% if files %}
-      <div class="row row-cols-3 row-cols-auto">
-          {% for file in files %}
-              <div class="col" style="max-width: 256px;">
-                  <div class="card text-center">
-                      <img src="{{ file.image_url }}" class="card-img-top" alt="Converted Image" style="width: 100%; height: auto; max-width: 256px;">
-                      <div class="card-body">
-                          <h5 class="card-title">Uploaded File: {{ file.original_filename }}</h5>
-                          <p class="card-text">Original Content Type: {{ file.content_type }}</p>
-                          <a href="./download/{{ file.saved_filename }}" class="btn btn-success">Download {{ file.image_extension }}</a>
-                          <button type="button" class="btn btn-secondary"
-                                  onclick="var full_path = window.location.origin + '/up/download/{{ file.saved_filename }}'; copyToClipboard(full_path, this);">
-                                  <i class="bi bi-clipboard" aria-hidden="true"></i> Copy Download URL
-                          </button>
-                      </div>
-                  </div>
-              </div>
-          {% endfor %}
-      </div>
-  {% endif %}
-  </div>
+                        <label for='imgupload'>
+                            <span class="width100 btn btn-lg" id="imgupload">
+                                <i class="bi bi-folder2-open"></i>
+                                Choose images
+                            </span>
+                        </label>
+                        <button type="submit" value="Upload" class="width100 btn btn-primary mb-2">Upload Images</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
 
-  <script src="/static/js/upload.js"></script>
+    <div class="viewer bg-glass">
+        <!-- Display the converted images -->
+        <h2 class="text-center">Uploaded Images:</h2>
+        {% if files %}
+        <div class="row row-cols-auto align-items-center">
+            {% for file in files %}
+                <div class="col" style="max-width: 256px;">
+                    <div class="card text-center">
+                        <img src="{{ file.image_url }}" class="card-img-top" alt="Converted Image" style="width: 100%; height: auto; max-width: 256px;"/>
+                        <div class="card-body">
+                            <h5 class="card-title">Uploaded File: {{ file.original_filename }}</h5>
+                            <p class="card-text">Original Content Type: {{ file.content_type }}</p>
+                            <a href="./download/{{ file.saved_filename }}" class="btn btn-success">Download {{ file.image_extension }}</a>
+                            <button type="button" class="btn btn-secondary"
+                                    onclick="var full_path = window.location.origin + '/up/download/{{ file.saved_filename }}'; copyToClipboard(full_path, this);">
+                                    <i class="bi bi-clipboard" aria-hidden="true"></i> Copy Download URL
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+
+    <script src="/static/js/upload.js"></script>
 
 </main>
 {% endblock %}
