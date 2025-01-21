@@ -1,8 +1,8 @@
 from src.dependencies import *
 import hashlib
 import shutil
-from src.schemas.FileNotFoundException import FileNotFoundException
-from src.schemas.FileTypeException import FileTypeException
+from src.schemas.errors.FileNotFoundException import FileNotFoundException
+from src.schemas.errors.FileTypeException import FileTypeException
 from fastapi import status
 
 router = APIRouter(

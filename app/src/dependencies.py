@@ -24,7 +24,7 @@ from src.routes.file_upload import file_upload as file_upload_route
 
 # schema imports
 from src.schemas.announcement import Announcement
-from src.schemas.FileTypeException import FileTypeException
+from src.schemas.errors.FileTypeException import FileTypeException
 
 # utils imports
 from src.utils.remove_old_uploads import remove_expired_files

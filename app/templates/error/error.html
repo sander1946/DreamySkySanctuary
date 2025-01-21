@@ -1,0 +1,26 @@
+{% extends "base.html" %} 
+
+{% block custom_css %}
+<!-- Bootstrap CSS -->
+<link href="/static/css/bootstrap/bootstrap.min.css" rel="stylesheet" />
+<link rel="stylesheet" href="/static/icons/font/bootstrap-icons.css" />
+<link href="/static/css/error.css" rel="stylesheet" />
+{% endblock %} 
+
+{% block title %}
+{{ http_status.phrase }} | Dreamy Sky Sanctuary
+{% endblock %}
+
+{% block content %}
+<div class="background">
+</div>
+
+<main class="main-grid">
+    <div class="error bg-glass">
+        <h1 class="display-6 text-center">An Error Has Occured</h1>
+        <h1 class="display-1 text-center">{{ http_status._value_ }}: {{ http_status.phrase }}</h1>
+        <p class="lead text-center">{{ http_status.description }}</p>
+        <p class="lead text-center"><a href="/" class="custom-link">Return to Home</a></p>
+    </div>
+</main>
+{% endblock %}
