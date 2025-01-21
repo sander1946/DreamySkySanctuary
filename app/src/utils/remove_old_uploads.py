@@ -2,7 +2,8 @@ import os
 import time
 
 
-def remove_expired_files(path, expire_time) -> None:
+async def remove_expired_files(path, expire_time) -> None:
+    print("Checking for expired files.")
     filenames = next(os.walk(path), (None, None, []))[2]  # [] if no file
     for file in filenames:
         file_path = os.path.join(path, file)

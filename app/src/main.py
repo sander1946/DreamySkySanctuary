@@ -91,5 +91,5 @@ async def unicorn_exception_handler(request: Request, exc: FileNotFoundException
 
 @app.on_event("startup")
 @repeat_every(seconds=60*60)  # check every hour for expired files
-def remove_expired_files_task():
-    remove_expired_files(path=config.UPLOAD_DIR, expire_time=config.UPLOAD_EXPIRE_TIME)
+async def remove_expired_files_task():
+    await remove_expired_files(path=config.UPLOAD_DIR, expire_time=config.UPLOAD_EXPIRE_TIME) & await refresh_team_file(path="team.json", expire_time=config.TEAM_EXPIRE_TIME)
