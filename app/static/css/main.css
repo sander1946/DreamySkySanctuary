@@ -2,6 +2,26 @@
   --background_img: url(/public/imgs/bg_aeri.jpg);
 }
 
+.min-vh-90 {
+  min-height: 90vh;
+}
+
+.min-vh-80 {
+  min-height: 80vh;
+}
+
+.min-vh-70 {
+  min-height: 70vh;
+}
+
+.min-vh-60 {
+  min-height: 60vh;
+}
+
+.min-vh-50 {
+  min-height: 50vh;
+}
+
 .row {
   margin-left: 0px;
   margin-right: 0px;

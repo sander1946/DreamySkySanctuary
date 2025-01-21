@@ -23,78 +23,132 @@
                     <div class="col-12">
                         <h5 class="col-12">{{ image.filename }}</h5></a>
                         <a href="/i/{{ image.filename }}" class="btn btn-success"><i class="bi bi-cloud-arrow-down"></i> Download</a>
-                        <form class="share col-12">
-                            <div class="row row-cols-2">
-                                <span class="col-2 input-group-btn">
-                                    <button type="button" class="input-btn btn btn-secondary"
-                                            onclick="copyToClipboard('share_code-{{ image.filename }}', this);">
-                                            <i class="bi bi-clipboard" aria-hidden="true"></i>
-                                    </button>
-                                </span>
-                                <div class="col-auto control-label">
-                                    Share link:
+                        {% if auth_code %}
+                        <form class="share" method="POST" action="{{ request.base_url }}image/remove/{{ image.filename }}/{{ image.auth_code }}">
+                            <button action="submit" class="btn btn-danger"><i class="bi bi-trash"></i> Remove</button>
+                        {% else %}
+                        <form class="share">
+                        {% endif %}
+                            <div class="col-12">
+                                <div class="row row-cols-2">
+                                    <span class="col-1 input-group-btn">
+                                        <button id="share_btn-{{ image.filename }}" type="button" class="input-btn btn btn-secondary"
+                                                onclick="copyToClipboard('share_code-{{ image.filename }}', this);">
+                                                <i class="bi bi-clipboard" aria-hidden="true"></i>
+                                        </button>
+                                    </span>
+                                    <label class="col-auto" for='share_btn-{{ image.filename }}'>
+                                        <div class="control-label">
+                                            Share link:
+                                        </div>
+                                    </label>
+                                    <div class="col-12">
+                                        <div class="input-group">
+                                            <input id="share_code-{{ image.filename }}" class="width100" onclick="this.select();" type="text" value="{{ request.base_url }}image/{{ image.filename }}" autocomplete="off" readonly="">
+                                        </div>
+                                    </div>
+                                    
                                 </div>
-                                <div class="col-12">
-                                    <div class="input-group">
-                                        <input id="share_code-{{ image.filename }}" class="width100" type="text" value="{{ request.base_url }}image/{{ image.filename }}" autocomplete="off" readonly="">
+                                <div class="row row-cols-2">
+                                    <span class="col-1 input-group-btn">
+                                        <button id="direct_btn-{{ image.filename }}" type="button" class="input-btn btn btn-secondary"
+                                                onclick="copyToClipboard('direct_code-{{ image.filename }}', this);">
+                                                <i class="bi bi-clipboard" aria-hidden="true"></i>
+                                        </button>
+                                    </span>
+                                    <label class="col-auto" for='direct_btn-{{ image.filename }}'>
+                                        <div class="control-label">
+                                            Direct image link:
+                                        </div>
+                                    </label>
+                                    <div class="col-12">
+                                        <div class="input-group">
+                                            <input id="direct_code-{{ image.filename }}" class="width100" onclick="this.select();" type="text" value="{{ request.base_url }}i/{{ image.filename }}" autocomplete="off" readonly="">
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="row row-cols-2">
-                                <span class="col-2 input-group-btn">
-                                    <button type="button" class="input-btn btn btn-secondary"
-                                            onclick="copyToClipboard('direct_code-{{ image.filename }}', this);">
-                                            <i class="bi bi-clipboard" aria-hidden="true"></i>
-                                    </button>
-                                </span>
-                                <div class="col-auto control-label">
-                                    Direct image link:
-                                </div>
-                                <div class="col-12">
-                                    <div class="input-group">
-                                        <input id="direct_code-{{ image.filename }}" class="width100" type="text" value="{{ request.base_url }}i/{{ image.filename }}" autocomplete="off" readonly="">
+                                {% if auth_code %}
+                                <div class="row row-cols-2">
+                                    <span class="col-1 input-group-btn">
+                                        <button id="manage_btn-{{ image.filename }}" type="button" class="input-btn btn btn-secondary"
+                                                onclick="copyToClipboard('manage_code-{{ image.filename }}', this);">
+                                                <i class="bi bi-clipboard" aria-hidden="true"></i>
+                                        </button>
+                                    </span>
+                                    <label class="col-auto" for='manage_btn-{{ image.filename }}'>
+                                        <div class="control-label">
+                                            Manage link:
+                                        </div>
+                                    </label>
+                                    <div class="col-12">
+                                        <div class="input-group">
+                                            <input id="manage_code-{{ image.filename }}" class="width100" onclick="this.select();" type="text" value="{{ request.base_url }}image/{{ image.filename }}/{{ image.auth_code }}" autocomplete="off" readonly="">
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            {% if auth_code %}
-                            <div class="row row-cols-2">
-                                <span class="col-2 input-group-btn">
-                                    <button type="button" class="input-btn btn btn-secondary"
-                                            onclick="copyToClipboard('manage_code-{{ image.filename }}', this);">
-                                            <i class="bi bi-clipboard" aria-hidden="true"></i>
-                                    </button>
-                                </span>
-                                <div class="col-auto control-label">
-                                    Manage link:
-                                </div>
-                                <div class="col-12">
-                                    <div class="input-group">
-                                        <input id="manage_code-{{ image.filename }}" class="width100" type="text" value="{{ request.base_url }}image/{{ image.filename }}/{{ image.auth_code }}" autocomplete="off" readonly="">
+                                <div class="row row-cols-2">
+                                    <span class="col-1 input-group-btn">
+                                        <button id="remove_btn-{{ image.filename }}" type="button" class="input-btn btn btn-secondary"
+                                                onclick="copyToClipboard('remove_code-{{ image.filename }}', this);">
+                                                <i class="bi bi-clipboard" aria-hidden="true"></i>
+                                        </button>
+                                    </span>
+                                    <label class="col-auto" for='remove_btn-{{ image.filename }}'>
+                                        <div class="control-label">
+                                            Removal link:
+                                        </div>
+                                    </label>
+                                    <div class="col-12">
+                                        <div class="input-group">
+                                            <input id="remove_code-{{ image.filename }}" class="width100" onclick="this.select();" type="text" value="{{ request.base_url }}image/remove/{{ image.filename }}/{{ image.auth_code }}" autocomplete="off" readonly="">
+                                        </div>
                                     </div>
                                 </div>
+                                {% endif %}
                             </div>
-                            <div class="row row-cols-2">
-                                <span class="col-2 input-group-btn">
-                                    <button type="button" class="input-btn btn btn-secondary"
-                                            onclick="copyToClipboard('remove_code-{{ image.filename }}', this);">
-                                            <i class="bi bi-clipboard" aria-hidden="true"></i>
-                                    </button>
-                                </span>
-                                <div class="col-auto control-label">
-                                    Removal link:
-                                </div>
-                                <div class="col-12">
-                                    <div class="input-group">
-                                        <input id="remove_code-{{ image.filename }}" class="width100" type="text" value="{{ request.base_url }}remove/{{ image.filename }}/{{ image.auth_code }}" autocomplete="off" readonly="">
-                                    </div>
-                                </div>
-                            </div>
-                            {% endif %}
                         </form>
                     </div>
                 </div>
             {% endfor %}
         </div>
+        {% if auth_code %}
+        <div class="row row-cols-2">
+            <span class="col-1 input-group-btn">
+                <button id="manage_gal_btn" type="button" class="input-btn btn btn-secondary"
+                        onclick="copyToClipboard('manage_gal_code', this);">
+                        <i class="bi bi-clipboard" aria-hidden="true"></i>
+                </button>
+            </span>
+            <label class="col-auto" for='manage_gal_btn'>
+                <div class="control-label">
+                    Gallery Manage link:
+                </div>
+            </label>
+            <div class="col-12">
+                <div class="input-group">
+                    <input id="manage_gal_code" class="width100" onclick="this.select();" type="text" value="{{ request.base_url }}gallery/{{ gallery_code }}/{{ auth_code }}" autocomplete="off" readonly="">
+                </div>
+            </div>
+        </div>
+        <div class="row row-cols-2">
+            <span class="col-1 input-group-btn">
+                <button id="remove_gal_btn" type="button" class="input-btn btn btn-secondary"
+                        onclick="copyToClipboard('remove_gal_code', this);">
+                        <i class="bi bi-clipboard" aria-hidden="true"></i>
+                </button>
+            </span>
+            <label class="col-auto" for='remove_gal_btn'>
+                <div class="control-label">
+                    Gallery Removal link:
+                </div>
+            </label>
+            <div class="col-12">
+                <div class="input-group">
+                    <input id="remove_gal_code" class="width100" onclick="this.select();" type="text" value="{{ request.base_url }}gallery/remove/{{ gallery_code }}/{{ auth_code }}" autocomplete="off" readonly="">
+                </div>
+            </div>
+        </div>
+        {% endif %}
         {% else %}
         <div>
             <h2 class="text-center">No Images Uploaded:</h2>

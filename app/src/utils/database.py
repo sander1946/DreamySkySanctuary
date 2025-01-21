@@ -1,0 +1,190 @@
+# python imports
+from dotenv import load_dotenv
+import os
+
+# 3rd party imports
+import mysql.connector
+from mysql.connector import Error
+from mysql.connector.abstracts import MySQLConnectionAbstract
+from mysql.connector.pooling import PooledMySQLConnection
+
+# local imports
+from src.schemas.ImageGalleryLink import ImageGalleryLink
+from src.schemas.GalleryData import GalleryData
+from src.schemas.ImageData import ImageData
+from src.logger import logger
+
+load_dotenv()
+DATABASE_ENDPOINT = os.getenv("DATABASE_ENDPOINT")
+DATABASE_USER = os.getenv("DATABASE_USERNAME")
+DATABASE_PASSWORD = os.getenv("DATABASE_PASSWORD")
+DATABASE_PORT = os.getenv("DATABASE_PORT")
+
+
+# Function to create MySQL database connection
+def create_connection(database_name: str) -> mysql.connector.connection.MySQLConnection:
+    logger.debug(f"Connecting to the database: {database_name}")
+    connection = None
+    try:
+        connection: PooledMySQLConnection | MySQLConnectionAbstract = mysql.connector.connect(
+            host=DATABASE_ENDPOINT,
+            user=DATABASE_USER,
+            password=DATABASE_PASSWORD,
+            database=database_name,
+            port=DATABASE_PORT
+        )
+        if not connection.is_connected():
+            logger.error("Failed to connect to the database.", extra={
+                "host": DATABASE_ENDPOINT,
+                "user": DATABASE_USER,
+                "database": database_name,
+                "port": DATABASE_PORT
+            })
+    except Error as e:
+        logger.error(f"The error '{e}' occurred")
+    return connection
+
+
+# Close MySQL connection
+def close_connection(connection: PooledMySQLConnection | MySQLConnectionAbstract):
+    if connection.is_connected():
+        logger.debug("Closing the database connection.")
+        connection.close()
+    if connection.is_connected():
+        logger.error("Failed to close the database connection.")
+    else:
+        logger.debug("Database connection closed.")
+
+
+# Insert query function
+def insert_query(connection: PooledMySQLConnection | MySQLConnectionAbstract, query, values):
+    logger.debug(f"Inserting data into the database: {values}")
+    cursor = connection.cursor()
+    try:
+        cursor.execute(query, values)
+        connection.commit()
+    except Error as e:
+        logger.error(f"The error '{e}' occurred")
+
+
+# Select query function
+def select_query(connection: PooledMySQLConnection | MySQLConnectionAbstract, query, values=None):
+    logger.debug(f"Selecting data from the database: {query}")
+    cursor = connection.cursor(dictionary=True)
+    try:
+        cursor.execute(query, values)
+        result = cursor.fetchall()
+        return result
+    except Error as e:
+        logger.error(f"The error '{e}' occurred")
+
+
+# Update query function
+def update_query(connection: PooledMySQLConnection | MySQLConnectionAbstract, query, values):
+    logger.debug(f"Updating data in the database: {values}")
+    cursor = connection.cursor()
+    try:
+        cursor.execute(query, values)
+        connection.commit()
+    except Error as e:
+        logger.error(f"The error '{e}' occurred")
+
+
+# Delete query function
+def delete_query(connection: PooledMySQLConnection | MySQLConnectionAbstract, query, values):
+    logger.debug(f"Deleting data from the database: {values}")
+    cursor = connection.cursor()
+    try:
+        cursor.execute(query, values)
+        connection.commit()
+    except Error as e:
+        logger.error(f"The error '{e}' occurred")
+
+
+def add_image_to_db(connection: PooledMySQLConnection | MySQLConnectionAbstract, image: ImageData) -> None:
+    logger.debug(f"Adding image: `{image.filename}` to the database.")
+    query = "INSERT INTO images (filename, auth_code, path, url, filesize) VALUES (%s, %s, %s, %s, %s)"
+    values = (image.filename, image.auth_code, image.path, image.url, image.filesize)
+    insert_query(connection, query, values)
+
+
+def get_image_from_db(connection: PooledMySQLConnection | MySQLConnectionAbstract, filename: str) -> ImageData | None:
+    logger.debug(f"Getting image: `{filename}` from the database.")
+    query = "SELECT * FROM images WHERE filename = %s"
+    values = (filename,)
+    result = select_query(connection, query, values)
+    if result:
+        return ImageData(**result[0])
+    return None
+
+
+def remove_image_from_db(connection: PooledMySQLConnection | MySQLConnectionAbstract, filename: str) -> None:
+    logger.debug(f"Removing {filename} from the database.")
+    query = "DELETE FROM images WHERE filename = %s"
+    values = (filename,)
+    delete_query(connection, query, values)
+
+
+def add_gallery_to_db(connection: PooledMySQLConnection | MySQLConnectionAbstract, gallery: GalleryData) -> None:
+    logger.debug(f"Adding gallery: `{gallery.gallery_code}` to the database.")
+    query = "INSERT INTO galleries (gallery_code, auth_code) VALUES (%s, %s)"
+    values = (gallery.gallery_code, gallery.auth_code)
+    insert_query(connection, query, values)
+
+
+def get_gallery_from_db(connection: PooledMySQLConnection | MySQLConnectionAbstract, gallery_code: str) -> GalleryData | None:
+    logger.debug(f"Getting gallery: `{gallery_code}` from the database.")
+    query = "SELECT * FROM galleries WHERE gallery_code = %s"
+    values = (gallery_code,)
+    result = select_query(connection, query, values)
+    if result:
+        return GalleryData(**result[0])
+    return None
+
+
+def remove_gallery_from_db(connection: PooledMySQLConnection | MySQLConnectionAbstract, gallery_code: str) -> None:
+    logger.debug(f"Removing {gallery_code} from the database.")
+    query = "DELETE FROM galleries WHERE gallery_code = %s"
+    values = (gallery_code,)
+    delete_query(connection, query, values)
+
+
+def add_image_gallery_link_to_db(connection: PooledMySQLConnection | MySQLConnectionAbstract, link: ImageGalleryLink) -> None:
+    logger.debug(f"Adding link: `{link.gallery_code}`, `{link.filename}` to the database.")
+    query = "INSERT INTO links (gallery_code, filename) VALUES (%s, %s)"
+    values = (link.gallery_code, link.filename)
+    insert_query(connection, query, values)
+
+
+def get_image_gallery_links_from_db(connection: PooledMySQLConnection | MySQLConnectionAbstract, gallery_code: str) -> list[ImageGalleryLink]:
+    logger.debug(f"Getting links: `{gallery_code}` from the database.")
+    query = "SELECT * FROM links WHERE gallery_code = %s"
+    values = (gallery_code,)
+    result = select_query(connection, query, values)
+    if result:
+        return [ImageGalleryLink(**link) for link in result]
+    return None
+
+
+def remove_gallery_links_from_db(connection: PooledMySQLConnection | MySQLConnectionAbstract, gallery_code: str) -> None:
+    logger.debug(f"Removing {gallery_code}'s links from the database.")
+    query = "DELETE FROM links WHERE gallery_code = %s"
+    values = (gallery_code,)
+    delete_query(connection, query, values)
+
+
+def remove_image_links_from_db(connection: PooledMySQLConnection | MySQLConnectionAbstract, filename: str) -> None:
+    logger.debug(f"Removing {filename}'s links from the database.")
+    query = "DELETE FROM links WHERE filename = %s"
+    values = (filename,)
+    delete_query(connection, query, values)
+
+
+def get_images_of_gallery_from_db(connection: PooledMySQLConnection | MySQLConnectionAbstract, gallery_code: str) -> list[ImageData]:
+    logger.debug(f"Getting images of gallery: `{gallery_code}` from the database.")
+    links = get_image_gallery_links_from_db(connection, gallery_code)
+    images = []
+    for link in links:
+        image = get_image_from_db(connection, link.filename)
+        images.append(image)
+    return images
