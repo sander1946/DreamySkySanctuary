@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+
+{% block custom_css %}
+<!-- Bootstrap CSS -->
+<link href="/static/css/bootstrap/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="/static/icons/font/bootstrap-icons.css">
+<link href="/static/css/upload.css" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<div class="background">
+</div>
+
+<main class="main-grid">
+    <div class="viewer bg-glass">
+        <!-- Display the converted images -->
+        <h2 class="text-center">Uploaded Image:</h2>
+        <div class="text-center"><a href="/upload" class="custom-link">Upload more image(s)</a></div>
+        {% if image %}
+        <div class="row row-cols-auto align-items-center">  
+            <div class="upload-col col">
+                <div class="row row-cols-1 text-center">
+                    <a href="/image/{{ image.filename }}" class="custom-hidden-link"><img src="{{ image.url }}" class="col-12" alt="Converted Image" style="width: 100%; height: auto; max-width: 400px;"/>
+                    <div class="col-12">
+                        <h5 class="col-12">{{ image.filename }}</h5></a>
+                        <a href="/i/{{ image.filename }}" class="btn btn-success"><i class="bi bi-cloud-arrow-down"></i> Download</a>
+                        <form class="share col-12">
+                            <div class="row row-cols-2">
+                                <span class="col-1 input-group-btn">
+                                    <button type="button" class="input-btn btn btn-secondary"
+                                            onclick="copyToClipboard('share_code', this);">
+                                            <i class="bi bi-clipboard" aria-hidden="true"></i>
+                                    </button>
+                                </span>
+                                <div class="col-auto control-label">
+                                    Share link:
+                                </div>
+                                <div class="col-12">
+                                    <div class="input-group">
+                                        <input id="share_code" class="width100" type="text" value="{{ request.base_url }}image/{{ image.filename }}" autocomplete="off" readonly="">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row row-cols-2">
+                                <span class="col-1 input-group-btn">
+                                    <button type="button" class="input-btn btn btn-secondary"
+                                            onclick="copyToClipboard('direct_code', this);">
+                                            <i class="bi bi-clipboard" aria-hidden="true"></i>
+                                    </button>
+                                </span>
+                                <div class="col-auto control-label">
+                                    Direct image link:
+                                </div>
+                                <div class="col-12">
+                                    <div class="input-group">
+                                        <input id="direct_code" class="width100" type="text" value="{{ request.base_url }}i/{{ image.filename }}" autocomplete="off" readonly="">
+                                    </div>
+                                </div>
+                            </div>
+                            {% if auth_code %}
+                            <div class="row row-cols-2">
+                                <span class="col-1 input-group-btn">
+                                    <button type="button" class="input-btn btn btn-secondary"
+                                            onclick="copyToClipboard('manage_code', this);">
+                                            <i class="bi bi-clipboard" aria-hidden="true"></i>
+                                    </button>
+                                </span>
+                                <div class="col-auto control-label">
+                                    Manage link:
+                                </div>
+                                <div class="col-12">
+                                    <div class="input-group">
+                                        <input id="manage_code" class="width100" type="text" value="{{ request.base_url }}image/{{ image.filename }}/{{ image.auth_code }}" autocomplete="off" readonly="">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row row-cols-2">
+                                <span class="col-1 input-group-btn">
+                                    <button type="button" class="input-btn btn btn-secondary"
+                                            onclick="copyToClipboard('remove_code', this);">
+                                            <i class="bi bi-clipboard" aria-hidden="true"></i>
+                                    </button>
+                                </span>
+                                <div class="col-auto control-label">
+                                    Removal link:
+                                </div>
+                                <div class="col-12">
+                                    <div class="input-group">
+                                        <input id="remove_code" class="width100" type="text" value="{{ request.base_url }}remove/{{ image.filename }}/{{ image.auth_code }}" autocomplete="off" readonly="">
+                                    </div>
+                                </div>
+                            </div>
+                            {% endif %}
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div>
+            <h2 class="text-center">No Images Uploaded:</h2>
+            <p class="text-center">There are no images uploaded at the moment. Please upload an image to view it <a href="upload" class="custom-link">here.</a></p>
+        </div>
+        {% endif %}
+    </div>
+
+    <script src="/static/js/image.js"></script>
+</main>
+{% endblock %}

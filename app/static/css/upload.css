@@ -20,6 +20,22 @@
     display: none;
 }
 
+.control-label {
+    margin-left: 6px;
+}
+
+.upload-col {
+    max-width: 400px;
+    padding: 12px;
+}
+
+.input-btn {
+    padding-left: 6px;
+    padding-top: 3px;
+    padding-right: 6px;
+    padding-bottom: 3px;
+}
+
 .upload-preview {
     max-width: 200px;
     width: 100%;

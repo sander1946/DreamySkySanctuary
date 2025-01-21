@@ -7,7 +7,7 @@
 <link href="/static/css/upload.css" rel="stylesheet">
 {% endblock %}
 
-{% block content %}    
+{% block content %}
 <div class="background">
 </div>
 
@@ -15,7 +15,7 @@
     <div class="upload bg-glass text-center">
         <!-- Upload Form -->
         <h1 class="text-center">Upload Your Images:</h1>
-        <form id="upload_image" action="./" method="POST" enctype="multipart/form-data">
+        <form id="upload_image" action="/upload" method="POST" enctype="multipart/form-data">
             <div class="col-sm-12" id="uploadControls">
                 <input type="hidden" name="gallery" id="gallery" value="">
                 <div class="row">
@@ -51,7 +51,7 @@
                     <div class="col-sm-12 align-center" style="line-height:135%">
                         <div id="upload-preview-container" class="width100 row row-cols-auto">
                         </div>
-                        <input id="imgupload" class="form-control" type="file" name="images" onchange="loadFile(event)" accept="{{ allowed_types }}" multiple required style="display:none"/>
+                        <input id="imgupload" class="form-control" type="file" name="uploaded_images" onchange="loadFile(event)" accept="{{ allowed_types }}" multiple required style="display:none"/>
 
                         <label for='imgupload'>
                             <span class="width100 btn btn-lg" id="imgupload">
@@ -64,31 +64,6 @@
                 </div>
             </div>
         </form>
-    </div>
-
-    <div class="viewer bg-glass">
-        <!-- Display the converted images -->
-        <h2 class="text-center">Uploaded Images:</h2>
-        {% if files %}
-        <div class="row row-cols-auto align-items-center">
-            {% for file in files %}
-                <div class="col" style="max-width: 256px;">
-                    <div class="card text-center">
-                        <img src="{{ file.image_url }}" class="card-img-top" alt="Converted Image" style="width: 100%; height: auto; max-width: 256px;"/>
-                        <div class="card-body">
-                            <h5 class="card-title">Uploaded File: {{ file.original_filename }}</h5>
-                            <p class="card-text">Original Content Type: {{ file.content_type }}</p>
-                            <a href="./download/{{ file.saved_filename }}" class="btn btn-success">Download {{ file.image_extension }}</a>
-                            <button type="button" class="btn btn-secondary"
-                                    onclick="var full_path = window.location.origin + '/up/download/{{ file.saved_filename }}'; copyToClipboard(full_path, this);">
-                                    <i class="bi bi-clipboard" aria-hidden="true"></i> Copy Download URL
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            {% endfor %}
-        </div>
-        {% endif %}
     </div>
 
     <script src="/static/js/upload.js"></script>

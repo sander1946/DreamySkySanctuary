@@ -62,11 +62,21 @@
   grid-area: Announcement;
 }
 
-.announcement a {
+.custom-link {
   text-decoration: none;
   opacity: 0.6;
   color: #fff;
 }
+
+.custom-link:hover {
+  opacity: 1;
+}
+
+.custom-hidden-link {
+  text-decoration: none;
+  color: #fff;
+} 
+
 .us {
   grid-area: Us;
 }
