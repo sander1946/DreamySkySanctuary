@@ -11,3 +11,5 @@ python-dotenv
 hashids
 shutils
 audioop-lts
+mysql-connector-python
+loguru
