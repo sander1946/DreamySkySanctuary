@@ -16,52 +16,51 @@
         <!-- Upload Form -->
         <h1 class="text-center">Upload Your Images:</h1>
         <form id="upload_image" action="/upload" method="POST" enctype="multipart/form-data">
-            <div class="col-sm-12" id="uploadControls">
-                <input type="hidden" name="gallery" id="gallery" value="">
-                <div class="row">
-                    <div class="col-sm-12 align-center">
-                        <select name="expire" id="expire" class="width100">
-                            <option value="0">No expiration date</option>
-                            <option value="1">Remove after 1 day</option>
-                            <option value="7">Remove after 7 days</option>
-                            <option value="31">Remove after 31 days</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-sm-12 align-center">
-                        <select name="imgsize" id="imgsize" class="width100">
-                            <option value="0" selected="">Keep the original dimentions</option>
-                            <option value="custom">Custom dimentions</option>
-                            <option value="1">934 x 282 Pixels (Carl level background)</option>
-                            <option value="2">512 x 512 Pixels (Discord Profile Picture)</option>
-                            <option value="3">960 x 540 Pixels (Discord Banner)</option>
-                            <option value="4">1920 x 1080 Pixels (HD)</option>
-                            <option value="5">3840 x 2160 Pixels (4K)</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="custom-size-input col-sm-12 align-center">
-                        <input type="number" min="1" name="width" id="width" class="width25" placeholder="Width">
-                        <input type="number" min="1" name="height" id="height" class="width25" placeholder="Height">
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-sm-12 align-center" style="line-height:135%">
-                        <div id="upload-preview-container" class="width100 row row-cols-auto">
+            <div class="">
+                <div class="row row-cols-1 justify-content-center" id="uploadControls">
+                    <input type="hidden" name="gallery" id="gallery" value="">
+                    <div class="upload-input-group col-12 justify-content-center">
+                        <div class="upload-input-group col-sm-12 align-center">
+                            <select name="expire" id="expire" class="width100">
+                                <option value="0">No expiration date</option>
+                                <option value="1">Remove after 1 day</option>
+                                <option value="7">Remove after 7 days</option>
+                                <option value="31">Remove after 31 days</option>
+                            </select>
                         </div>
-                        <input id="imgupload" class="form-control" type="file" name="uploaded_images" onchange="loadFile(event)" accept="image/jpeg, image/jpg, image/png, image/gif, image/gifv, video/webm, video/mp4, video/wav, audio/mp3, video/ogg, " multiple="" required="" style="display:none">
+                    </div>
+                    <div class="upload-input-group col-12 justify-content-center">
+                        <div class="upload-input-group col-sm-12 align-center">
+                            <select name="imgsize" id="imgsize" class="width100">
+                                <option value="0" selected="">Keep the original dimentions</option>
+                                <option value="custom">Custom dimentions</option>
+                                <option value="1">934 x 282 Pixels (Carl level background)</option>
+                                <option value="2">512 x 512 Pixels (Discord Profile Picture)</option>
+                                <option value="3">960 x 540 Pixels (Discord Banner)</option>
+                                <option value="4">1920 x 1080 Pixels (HD)</option>
+                                <option value="5">3840 x 2160 Pixels (4K)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="upload-input-group col-12 justify-content-center">
+                        <div class="upload-input-group custom-size-input col-sm-12 align-center">
+                            <input type="number" min="1" name="width" id="width" class="width25" placeholder="Width">
+                            <input type="number" min="1" name="height" id="height" class="width25" placeholder="Height">
+                        </div>
+                    </div>
+                    <div class="upload-input-btn col-12 justify-content-center">
+                        <div class="upload-input-btn col-sm-12 align-center" style="line-height:135%">
+                            <div id="upload-preview-container" class="width100 row row-cols-auto">
+                            </div>
+                            <input id="imgupload" class="form-control" type="file" name="uploaded_images" onchange="loadFile(event)" accept="image/jpeg, image/jpg, image/png, image/gif, image/gifv, video/webm, video/mp4, video/wav, audio/mp3, video/ogg, " multiple="" required="" style="display:none">
 
-                        <label for="imgupload" class="width100 btn btn-primary btn-lg mb-2">
-                            <span id="imgupload" class="">
-                                <i class="bi bi-folder2-open"></i>
-                                Choose images
-                            </span>
-                        </label>
-                        <button type="submit" value="Upload" class="width100 btn btn-secondary mb-2">
-                            <span> Upload Images </span>
-                        </button>
+                            <label for="imgupload" class="width100 btn btn-primary btn-lg mb-2">
+                                <span id="imgupload" class="">
+                                    <i class="bi bi-folder2-open"></i>
+                                    Choose images
+                                </span>
+                            </label>
+                        </div>
                     </div>
                 </div>
             </div>

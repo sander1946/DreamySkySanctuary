@@ -20,4 +20,5 @@ var loadFile = function(event) {
             URL.revokeObjectURL(output.src) // free memory
         }
     }
+    document.getElementById('upload_image').submit();
 };
