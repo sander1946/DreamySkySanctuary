@@ -21,7 +21,7 @@ async def main(request: Request, response: Response):
     string_types = ""
     for type in config.ALLOWED_FILE_TYPES:
         string_types += f"{type}, "
-    return templates.TemplateResponse(name="main/upload.html", context={"request": request, "allowed_types": string_types})
+    return templates.TemplateResponse(name="main/upload.html", context={"request": request, "allowed_types": string_types, "base_url": str(request.base_url)[:-1]})
 
 
 @router.post("/upload", include_in_schema=True)
@@ -110,7 +110,7 @@ async def gallery(request: Request, gallery_code: str):
     close_connection(connection)
     return templates.TemplateResponse(
         name="main/gallery.html",
-        context={"request": request, "images": images}
+        context={"request": request, "images": images, "base_url": str(request.base_url)[:-1]}
     )
 
 
@@ -142,7 +142,7 @@ async def gallery(request: Request, gallery_code: str, auth_code: str):
     close_connection(connection)
     return templates.TemplateResponse(
         name="main/gallery.html",
-        context={"request": request, "images": images, "gallery_code": gallery_code, "auth_code": auth_code}
+        context={"request": request, "images": images, "gallery_code": gallery_code, "auth_code": auth_code, "base_url": str(request.base_url)[:-1]}
     )
 
 
@@ -159,7 +159,7 @@ async def image(request: Request, file_name: str):
     close_connection(connection)
     return templates.TemplateResponse(
         name="main/image.html",
-        context={"request": request, "image": image}
+        context={"request": request, "image": image, "base_url": str(request.base_url)[:-1]}
     )
 
 
@@ -180,7 +180,7 @@ async def manage_image(request: Request, file_name: str, auth_code: str):
     close_connection(connection)
     return templates.TemplateResponse(
         name="main/image.html",
-        context={"request": request, "image": image, "auth_code": auth_code}
+        context={"request": request, "image": image, "auth_code": auth_code, "base_url": str(request.base_url)[:-1]}
     )
 
 
@@ -244,6 +244,24 @@ async def remove_gallery(request: Request, gallery_code: str, auth_code: str):
 
 
 @router.get('/i/{file_name}')
+async def download(request: Request, file_name: str):
+    connection = create_connection("Uploads")
+    
+    image = get_image_from_db(connection, file_name)
+    
+    if not image:
+        close_connection(connection)
+        raise FileNotFoundException(file_name=file_name, message="Image not found.")
+
+    if not os.path.exists(image.path):
+        raise FileNotFoundException(file_name=file_name, file_path=image.path)
+    return templates.TemplateResponse(
+        name="main/imageview.html",
+        context={"request": request, "image": image, "base_url": str(request.base_url)[:-1]}
+    )
+
+
+@router.get('/download/{file_name}')
 async def download(request: Request, file_name: str):
     connection = create_connection("Uploads")
     

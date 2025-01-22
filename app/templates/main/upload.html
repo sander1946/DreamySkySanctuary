@@ -51,15 +51,17 @@
                     <div class="col-sm-12 align-center" style="line-height:135%">
                         <div id="upload-preview-container" class="width100 row row-cols-auto">
                         </div>
-                        <input id="imgupload" class="form-control" type="file" name="uploaded_images" onchange="loadFile(event)" accept="{{ allowed_types }}" multiple required style="display:none"/>
+                        <input id="imgupload" class="form-control" type="file" name="uploaded_images" onchange="loadFile(event)" accept="image/jpeg, image/jpg, image/png, image/gif, image/gifv, video/webm, video/mp4, video/wav, audio/mp3, video/ogg, " multiple="" required="" style="display:none">
 
-                        <label for='imgupload'>
-                            <span class="width100 btn btn-lg" id="imgupload">
+                        <label for="imgupload" class="width100 btn btn-primary btn-lg mb-2">
+                            <span id="imgupload" class="">
                                 <i class="bi bi-folder2-open"></i>
                                 Choose images
                             </span>
                         </label>
-                        <button type="submit" value="Upload" class="width100 btn btn-primary mb-2">Upload Images</button>
+                        <button type="submit" value="Upload" class="width100 btn btn-secondary mb-2">
+                            <span> Upload Images </span>
+                        </button>
                     </div>
                 </div>
             </div>
