@@ -243,24 +243,6 @@ async def remove_gallery(request: Request, gallery_code: str, auth_code: str):
     return RedirectResponse("/upload", status_code=status.HTTP_303_SEE_OTHER)
 
 
-@router.get('/i/{file_name}')
-async def download(request: Request, file_name: str):
-    connection = create_connection("Uploads")
-    
-    image = get_image_from_db(connection, file_name)
-    
-    if not image:
-        close_connection(connection)
-        raise FileNotFoundException(file_name=file_name, message="Image not found.")
-
-    if not os.path.exists(image.path):
-        raise FileNotFoundException(file_name=file_name, file_path=image.path)
-    return templates.TemplateResponse(
-        name="main/imageview.html",
-        context={"request": request, "image": image, "base_url": str(request.base_url)[:-1]}
-    )
-
-
 @router.get('/download/{file_name}')
 async def download(request: Request, file_name: str):
     connection = create_connection("Uploads")
