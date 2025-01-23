@@ -1,6 +1,7 @@
-DROP DATABASE IF EXISTS Uploads;
-CREATE database Uploads;
-USE Uploads;
+DROP DATABASE IF EXISTS Website;
+CREATE database Website;
+USE Website;
+
 CREATE TABLE galleries (
     id INT AUTO_INCREMENT PRIMARY KEY,
 	gallery_code VARCHAR(15) NOT NULL,
@@ -23,4 +24,20 @@ CREATE TABLE links (
     gallery_code VARCHAR(15) NOT NULL,
     filename VARCHAR(15) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(32) UNIQUE NOT NULL,
+    password_hash VARCHAR(256) NOT NULL,
+    email VARCHAR(128) NOT NULL,
+    discord VARCHAR(32) NOT NULL,
+    is_admin BOOLEAN DEFAULT FALSE,
+    disabled BOOLEAN DEFAULT FALSE,
+    otp_enabled BOOLEAN DEFAULT FALSE,
+    otp_verified BOOLEAN DEFAULT FALSE,
+    otp_base32 VARCHAR(128),
+    otp_auth_url VARCHAR(256),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
