@@ -13,3 +13,8 @@ shutils
 audioop-lts
 mysql-connector-python
 loguru
+fastapi_login
+werkzeug
+python-jose[cryptography]
+pyotp
+qrcode[pil]

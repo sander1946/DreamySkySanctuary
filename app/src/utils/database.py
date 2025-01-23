@@ -9,6 +9,7 @@ from mysql.connector.abstracts import MySQLConnectionAbstract
 from mysql.connector.pooling import PooledMySQLConnection
 
 # local imports
+from src.schemas.Login import UserDB
 from src.schemas.ImageGalleryLink import ImageGalleryLink
 from src.schemas.GalleryData import GalleryData
 from src.schemas.ImageData import ImageData
@@ -188,3 +189,37 @@ def get_images_of_gallery_from_db(connection: PooledMySQLConnection | MySQLConne
         image = get_image_from_db(connection, link.filename)
         images.append(image)
     return images
+
+
+def get_user_by_id(connection: PooledMySQLConnection | MySQLConnectionAbstract, user_id: int) -> UserDB:
+    logger.debug(f"Getting user: `{user_id}` from the database.")
+    query = "SELECT * FROM users WHERE id = %s"
+    values = (user_id,)
+    result = select_query(connection, query, values)
+    if result:
+        return UserDB(**result[0])
+    return None
+
+
+def get_user_by_username(connection: PooledMySQLConnection | MySQLConnectionAbstract, username: str) -> UserDB:
+    logger.debug(f"Getting user: `{username}` from the database.")
+    query = "SELECT * FROM users WHERE username = %s"
+    values = (username,)
+    result = select_query(connection, query, values)
+    if result:
+        return UserDB(**result[0])
+    return None
+
+
+def create_user(connection: PooledMySQLConnection | MySQLConnectionAbstract, user: UserDB) -> None:
+    logger.debug(f"Creating user: `{user.username}` in the database.")
+    query = "INSERT INTO users (username, email, discord, password_hash) VALUES (%s, %s, %s, %s)"
+    values = (user.username, user.email, user.discord, user.password_hash)
+    insert_query(connection, query, values)
+
+
+def update_otp_user(connection: PooledMySQLConnection | MySQLConnectionAbstract, user: UserDB) -> None:
+    logger.debug(f"Updating user: `{user.username}` in the database.")
+    query = "UPDATE users SET otp_base32 = %s, otp_auth_url = %s, otp_enabled = %s, otp_verified = %s WHERE username = %s"
+    values = (user.otp_base32, user.otp_auth_url, user.otp_enabled, user.otp_verified, user.username)
+    update_query(connection, query, values)

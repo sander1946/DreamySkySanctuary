@@ -1,9 +1,11 @@
+from src.schemas.errors.NotAuthenticatedException import NotAuthenticatedException
 from src.utils.refresh_team_file import refresh_team_file
 from src.dependencies import *
 from fastapi.exceptions import RequestValidationError, HTTPException
 from starlette.exceptions import HTTPException as StarletteHTTPException
 from src.schemas.errors.FileNotFoundException import FileNotFoundException
 from src.schemas.errors.FileTypeException import FileTypeException
+from fastapi.middleware.cors import CORSMiddleware
 import http
 
 # app config
@@ -11,6 +13,14 @@ app = FastAPI(
     title=config.APP_NAME,
     description=config.DESCRIPTION,
     version=config.VERSION,
+)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=config.CLIENT_ORIGIN,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 # mount static files
@@ -21,7 +31,7 @@ templates = Jinja2Templates(directory=config.TEMPLATES_DIR)
 
 app.include_router(main_route.router)
 app.include_router(bot_route.router)
-# app.include_router(auth_route.router)
+app.include_router(auth_route.router)
 app.include_router(file_upload_route.router)
 
 @app.exception_handler(StarletteHTTPException)
@@ -51,6 +61,11 @@ async def http_exception_handler(request, exc: StarletteHTTPException):
             context=context,
             status_code=exc.status_code
         )
+
+@app.exception_handler(NotAuthenticatedException)
+def exc_handler(request, exc):
+    return RedirectResponse(request.headers.get('referer') if request.headers.get('referer').startswith(str(request.base_url)) else "/upload", status_code=status.HTTP_303_SEE_OTHER)
+
 
 @app.exception_handler(ValueError)
 async def value_error_handler(request, exc: ValueError):

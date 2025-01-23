@@ -53,7 +53,7 @@ async def upload_file(request: Request, uploaded_images: List[UploadFile] = File
         
         saved_files.append(image_data)
     if len(saved_files) == 1:
-        connection = create_connection("Uploads")
+        connection = create_connection("Website")
         image = saved_files[0]
         
         add_image_to_db(connection, image)
@@ -74,7 +74,7 @@ async def upload_file(request: Request, uploaded_images: List[UploadFile] = File
             auth_code=gallery_hash.hexdigest()[-15:]
         )
         
-        connection = create_connection("Uploads")
+        connection = create_connection("Website")
         
         add_gallery_to_db(connection, gallery_data)
         
@@ -93,7 +93,7 @@ async def upload_file(request: Request, uploaded_images: List[UploadFile] = File
 
 @router.get('/gallery/{gallery_code}')
 async def gallery(request: Request, gallery_code: str):
-    connection = create_connection("Uploads")
+    connection = create_connection("Website")
     
     gallery_data = get_gallery_from_db(connection, gallery_code)
     
@@ -122,7 +122,7 @@ async def gallery(request: Request, gallery_code: str):
 
 @router.get('/gallery/{gallery_code}/{auth_code}')
 async def gallery(request: Request, gallery_code: str, auth_code: str):
-    connection = create_connection("Uploads")
+    connection = create_connection("Website")
     
     gallery_data = get_gallery_from_db(connection, gallery_code)
     
@@ -154,7 +154,7 @@ async def gallery(request: Request, gallery_code: str, auth_code: str):
 
 @router.get('/image/{file_name}')
 async def image(request: Request, file_name: str):
-    connection = create_connection("Uploads")
+    connection = create_connection("Website")
     
     image = get_image_from_db(connection, file_name)
 
@@ -171,7 +171,7 @@ async def image(request: Request, file_name: str):
 
 @router.get('/image/{file_name}/{auth_code}')
 async def manage_image(request: Request, file_name: str, auth_code: str):
-    connection = create_connection("Uploads")
+    connection = create_connection("Website")
     
     image = get_image_from_db(connection, file_name)
 
@@ -193,7 +193,7 @@ async def manage_image(request: Request, file_name: str, auth_code: str):
 @router.get('/image/remove/{file_name}/{auth_code}')
 @router.post('/image/remove/{file_name}/{auth_code}')
 async def remove_image(request: Request, file_name: str, auth_code: str):
-    connection = create_connection("Uploads")
+    connection = create_connection("Website")
     
     image = get_image_from_db(connection, file_name)
 
@@ -220,7 +220,7 @@ async def remove_image(request: Request, file_name: str, auth_code: str):
 @router.get('/gallery/remove/{gallery_code}/{auth_code}')
 @router.post('/gallery/remove/{gallery_code}/{auth_code}')
 async def remove_gallery(request: Request, gallery_code: str, auth_code: str):
-    connection = create_connection("Uploads")
+    connection = create_connection("Website")
     
     gallery_data = get_gallery_from_db(connection, gallery_code)
     
@@ -251,7 +251,7 @@ async def remove_gallery(request: Request, gallery_code: str, auth_code: str):
 
 @router.get('/download/{file_name}')
 async def download(request: Request, file_name: str):
-    connection = create_connection("Uploads")
+    connection = create_connection("Website")
     
     image = get_image_from_db(connection, file_name)
     
