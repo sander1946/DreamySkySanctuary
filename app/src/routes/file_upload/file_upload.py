@@ -1,3 +1,4 @@
+from src.utils.flash import get_flashed_messages
 from src.schemas.ImageGalleryLink import ImageGalleryLink
 from src.schemas.GalleryData import GalleryData
 from src.utils.database import add_gallery_to_db, add_image_gallery_link_to_db, add_image_to_db, close_connection, create_connection, get_gallery_from_db, get_image_from_db, get_image_gallery_links_from_db, remove_gallery_from_db, remove_gallery_links_from_db, remove_image_from_db, remove_image_links_from_db
@@ -15,7 +16,8 @@ router = APIRouter(
     tags=["Upload"],
 )
 
-templates = Jinja2Templates(directory="templates")
+templates = Jinja2Templates(directory=config.TEMPLATES_DIR)
+templates.env.globals["get_flashed_messages"] = get_flashed_messages
 
 @router.get("/upload", include_in_schema=True)
 async def main(request: Request, response: Response):

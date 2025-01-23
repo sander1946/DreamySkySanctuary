@@ -3,12 +3,14 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends, Form, HTTPException, status
 from fastapi.responses import FileResponse, HTMLResponse, RedirectResponse, StreamingResponse
+from fastapi.templating import Jinja2Templates
 from fastapi_login import LoginManager
 from fastapi_login.exceptions import InvalidCredentialsException
 
 import pyotp
 from werkzeug.security import generate_password_hash, check_password_hash
 
+from src.utils.flash import get_flashed_messages
 from src.schemas.errors.NotAuthenticatedException import NotAuthenticatedException
 from src.config import config
 from src.schemas.Login import LoginForm, RegisterForm, User, UserDB, UserRequestSchema
@@ -19,6 +21,8 @@ import qrcode
 login_manager = LoginManager(config.SERVER_SECRET, token_url="/auth/login", use_cookie=True, not_authenticated_exception=NotAuthenticatedException)
 login_manager.cookie_name = "user_token"
 
+templates = Jinja2Templates(directory=config.TEMPLATES_DIR)
+templates.env.globals["get_flashed_messages"] = get_flashed_messages
 
 router = APIRouter(
     prefix="/auth",

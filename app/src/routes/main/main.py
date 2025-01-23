@@ -1,8 +1,10 @@
+from src.utils.flash import flash
 from src.utils.refresh_team_file import get_team_data
 from src.dependencies import *
 from src.schemas.announcement import Announcement
 from datetime import datetime, timedelta
 from fastapi import status
+from src.utils.flash import get_flashed_messages
 
 from src.routes.bot.bot import fetch_by_id
 
@@ -11,7 +13,8 @@ router = APIRouter(
     tags=["Main"]
 )
 
-templates = Jinja2Templates(directory="templates")
+templates = Jinja2Templates(directory=config.TEMPLATES_DIR)
+templates.env.globals["get_flashed_messages"] = get_flashed_messages
 
 @router.get("/", include_in_schema=True)
 async def main(request: Request, response: Response):
@@ -26,6 +29,7 @@ async def main(request: Request, response: Response):
         date = datetime.now() - timedelta(days=1),
         image = "/public/imgs/flags/en.png"),
     ]
+    flash(request, "This is a test flash message", "info")
     return templates.TemplateResponse(name="main/main.html", context={"request": request, "announcements": announcements})
 
 
