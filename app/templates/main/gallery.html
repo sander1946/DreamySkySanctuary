@@ -53,7 +53,7 @@
                 </label>
                 <div class="gallery-code-col col">
                     <div class="gallery-code-wrapper">
-                        <input id="share_gal_code" class="gallery-code" type="text" value="{{ base_url }}/gallery/{{ gallery_code }}" autocomplete="off" readonly="">
+                        <input id="share_gal_code" class="gallery-code" type="text" value="{{ base_url }}/gallery/{{ gallery_code }}" autocomplete="off" readonly="" onclick="this.select();">
                         <span class="gallery-copy">
                             <button id="share_gal_btn" type="button" class="gallery-copy-button input-btn btn btn-secondary" onclick="copyToClipboard('share_gal_code', this);">
                                 <i class="bi bi-clipboard" aria-hidden="true"></i>
@@ -69,7 +69,7 @@
                 </label>
                 <div class="gallery-code-col col">
                     <div class="gallery-code-wrapper">
-                        <input id="manage_gal_code" class="gallery-code" type="text" value="{{ base_url }}/gallery/{{ gallery_code }}/{{ auth_code }}" autocomplete="off" readonly="">
+                        <input id="manage_gal_code" class="gallery-code" type="text" value="{{ base_url }}/gallery/{{ gallery_code }}/{{ auth_code }}" autocomplete="off" readonly="" onclick="this.select();">
                         <span class="gallery-copy">
                             <button id="manage_gal_btn" type="button" class="gallery-copy-button input-btn btn btn-secondary" onclick="copyToClipboard('manage_gal_code', this);">
                                 <i class="bi bi-clipboard" aria-hidden="true"></i>
@@ -84,7 +84,7 @@
                 </label>
                 <div class="gallery-code-col col">
                     <div class="gallery-code-wrapper">
-                        <input id="remove_gal_code" class="gallery-code" type="text" value="{{ base_url }}/gallery/remove/{{ gallery_code }}/{{ auth_code }}" autocomplete="off" readonly="">
+                        <input id="remove_gal_code" class="gallery-code" type="text" value="{{ base_url }}/gallery/remove/{{ gallery_code }}/{{ auth_code }}" autocomplete="off" readonly="" onclick="this.select();">
                         <span class="gallery-copy">
                             <button id="remove_gal_btn" type="button" class="gallery-copy-button input-btn btn btn-secondary" onclick="copyToClipboard('remove_gal_code', this);">
                                 <i class="bi bi-clipboard" aria-hidden="true"></i>

@@ -48,7 +48,7 @@
                 </label>
                 <div class="gallery-code-col col">
                     <div class="gallery-code-wrapper">
-                        <input id="share_img_code" class="gallery-code" type="text" value="{{ base_url }}/image/{{ image.filename }}" autocomplete="off" readonly="">
+                        <input id="share_img_code" class="gallery-code" type="text" value="{{ base_url }}/image/{{ image.filename }}" autocomplete="off" readonly="" onclick="this.select();">
                         <span class="gallery-copy">
                             <button id="share_img_btn" type="button" class="gallery-copy-button input-btn btn btn-secondary" onclick="copyToClipboard('share_img_code', this);">
                                 <i class="bi bi-clipboard" aria-hidden="true"></i>
@@ -63,7 +63,7 @@
                 </label>
                 <div class="gallery-code-col col">
                     <div class="gallery-code-wrapper">
-                        <input id="direct_img_code" class="gallery-code" type="text" value="{{ base_url }}/i/{{ image.filename }}" autocomplete="off" readonly="">
+                        <input id="direct_img_code" class="gallery-code" type="text" value="{{ base_url }}/i/{{ image.filename }}" autocomplete="off" readonly="" onclick="this.select();">
                         <span class="gallery-copy">
                             <button id="direct_img_btn" type="button" class="gallery-copy-button input-btn btn btn-secondary" onclick="copyToClipboard('direct_img_code', this);">
                                 <i class="bi bi-clipboard" aria-hidden="true"></i>
@@ -78,7 +78,7 @@
                 </label>
                 <div class="gallery-code-col col">
                     <div class="gallery-code-wrapper">
-                        <input id="down_img_code" class="gallery-code" type="text" value="{{ base_url }}/download/{{ image.filename }}" autocomplete="off" readonly="">
+                        <input id="down_img_code" class="gallery-code" type="text" value="{{ base_url }}/download/{{ image.filename }}" autocomplete="off" readonly="" onclick="this.select();">
                         <span class="gallery-copy">
                             <button id="down_img_btn" type="button" class="gallery-copy-button input-btn btn btn-secondary" onclick="copyToClipboard('down_img_code', this);">
                                 <i class="bi bi-clipboard" aria-hidden="true"></i>
@@ -94,7 +94,7 @@
                 </label>
                 <div class="gallery-code-col col">
                     <div class="gallery-code-wrapper">
-                        <input id="manage_img_code" class="gallery-code" type="text" value="{{ base_url }}/image/{{ image.filename }}/{{ image.auth_code }}" autocomplete="off" readonly="">
+                        <input id="manage_img_code" class="gallery-code" type="text" value="{{ base_url }}/image/{{ image.filename }}/{{ image.auth_code }}" autocomplete="off" readonly="" onclick="this.select();">
                         <span class="gallery-copy">
                             <button id="manage_img_btn" type="button" class="gallery-copy-button input-btn btn btn-secondary" onclick="copyToClipboard('manage_img_code', this);">
                                 <i class="bi bi-clipboard" aria-hidden="true"></i>
@@ -109,7 +109,7 @@
                 </label>
                 <div class="gallery-code-col col">
                     <div class="gallery-code-wrapper">
-                        <input id="remove_img_code" class="gallery-code" type="text" value="{{ base_url }}/image/remove/{{ image.filename }}/{{ image.auth_code }}" autocomplete="off" readonly="">
+                        <input id="remove_img_code" class="gallery-code" type="text" value="{{ base_url }}/image/remove/{{ image.filename }}/{{ image.auth_code }}" autocomplete="off" readonly="" onclick="this.select();">
                         <span class="gallery-copy">
                             <button id="remove_img_btn" type="button" class="gallery-copy-button input-btn btn btn-secondary" onclick="copyToClipboard('remove_img_code', this);">
                                 <i class="bi bi-clipboard" aria-hidden="true"></i>
