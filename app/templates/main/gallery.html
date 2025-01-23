@@ -31,7 +31,7 @@
                         <a target="_blank" href="/image/{{ image.filename }}" class="custom-hidden-link">
                             <p class="thumb-name">{{ image.filename }}</p>
                         </a>
-                        <a target="_blank" href="/i/{{ image.filename }}" class="btn btn-success"><i class="bi bi-cloud-arrow-down"></i> Download</a>
+                        <a target="_blank" href="/download/{{ image.filename }}" class="btn btn-success"><i class="bi bi-cloud-arrow-down"></i> Download</a>
 
                         {% if auth_code %}
                         <a target="_blank" href="/image/{{ image.filename }}/{{ image.auth_code }}" class="btn btn-primary"><i class="bi bi-eye"></i> View</a>
