@@ -8,6 +8,7 @@ from src.schemas.errors.FileNotFoundException import FileNotFoundException
 from src.schemas.errors.FileTypeException import FileTypeException
 from fastapi import status
 from src.schemas.ImageData import ImageData
+import time
 
 router = APIRouter(
     prefix="",
@@ -30,8 +31,11 @@ async def upload_file(request: Request, uploaded_images: List[UploadFile] = File
     for image in uploaded_images:
         if image.content_type not in config.ALLOWED_FILE_TYPES:
             raise FileTypeException(image.filename, image.content_type, config.ALLOWED_FILE_TYPES)
-
-        hash = hashlib.md5(str(image.filename).encode("utf-8"))
+        
+        auth_hash = hashlib.md5(f"{time.time_ns()}-{image.size}-{image.filename}".encode("utf-8"))
+        hash = hashlib.sha512(f"{image.filename}-{image.size}-{time.time_ns()}".encode("utf-8"))
+        print(f"{auth_hash.hexdigest()}\n{hash.hexdigest()}")
+        
         filename = f"{hash.hexdigest()}.{config.ALLOWED_FILE_TYPES[image.content_type]}"
         filename = filename[-15:]
         save_path = os.path.join(config.UPLOAD_DIR, filename)
@@ -43,7 +47,7 @@ async def upload_file(request: Request, uploaded_images: List[UploadFile] = File
             filename=filename,
             path=save_path,
             url=f"/images/{filename}",
-            auth_code=hash.hexdigest()[:11],
+            auth_code=auth_hash.hexdigest()[-15:],
             filesize=os.path.getsize(save_path)
         )
         
@@ -61,11 +65,13 @@ async def upload_file(request: Request, uploaded_images: List[UploadFile] = File
         hashstring = ""
         for image in saved_files:
             hashstring += image.filename
-        gallery_hash = hashlib.md5(str(hashstring).encode("utf-8"))
+        
+        auth_hash = hashlib.md5(f"{time.time_ns()}-{hashstring}".encode("utf-8"))
+        gallery_hash = hashlib.sha512(f"{hashstring}-{time.time_ns()}".encode("utf-8"))
 
         gallery_data = GalleryData(
-            gallery_code=gallery_hash.hexdigest()[11:],
-            auth_code=gallery_hash.hexdigest()[:11]
+            gallery_code=gallery_hash.hexdigest()[-15:],
+            auth_code=gallery_hash.hexdigest()[-15:]
         )
         
         connection = create_connection("Uploads")

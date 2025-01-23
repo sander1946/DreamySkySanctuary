@@ -3,15 +3,15 @@ CREATE database Uploads;
 USE Uploads;
 CREATE TABLE galleries (
     id INT AUTO_INCREMENT PRIMARY KEY,
-	gallery_code VARCHAR(25) NOT NULL,
-    auth_code VARCHAR(25) NOT NULL,
+	gallery_code VARCHAR(15) NOT NULL,
+    auth_code VARCHAR(15) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE images (
     id INT AUTO_INCREMENT PRIMARY KEY,
 	filename VARCHAR(15) NOT NULL,
-    auth_code VARCHAR(25) NOT NULL,
+    auth_code VARCHAR(15) NOT NULL,
     path VARCHAR(100) NOT NULL,
     url VARCHAR(100) NOT NULL,
     filesize INT NOT NULL,
@@ -20,7 +20,7 @@ CREATE TABLE images (
 
 CREATE TABLE links (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    gallery_code VARCHAR(25) NOT NULL,
+    gallery_code VARCHAR(15) NOT NULL,
     filename VARCHAR(15) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
