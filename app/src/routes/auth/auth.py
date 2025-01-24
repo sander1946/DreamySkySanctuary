@@ -290,4 +290,6 @@ async def reset_password(request: Request, token: str, resetPasswordFrom: Annota
     
     close_connection(connection)
     
+    flash(request, "Password has been reset successfully", FlashCategory.SUCCESS.value)
+    
     return RedirectResponse(url="/login", status_code=status.HTTP_302_FOUND)
