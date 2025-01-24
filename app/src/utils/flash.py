@@ -21,5 +21,4 @@ def flash(request: Request, message: typing.Any, category: str = "primary") -> N
     request.session["_messages"].append({"message": message, "category": category})
 
 def get_flashed_messages(request: Request) -> list[dict[str, str]]:
-    print(request.session)
     return request.session.pop("_messages") if "_messages" in request.session else []

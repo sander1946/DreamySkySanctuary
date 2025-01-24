@@ -1,0 +1,29 @@
+{% extends "base.html" %} 
+
+{% block custom_css %}
+<!-- Bootstrap CSS -->
+<link href="/static/css/bootstrap/bootstrap.min.css" rel="stylesheet" />
+<link rel="stylesheet" href="/static/icons/font/bootstrap-icons.css" />
+<link href="/static/css/account.css" rel="stylesheet" />
+{% endblock %} 
+
+{% block title %}
+Account
+{% endblock %}
+
+{% block content %}
+<div class="background">
+</div>
+
+<main class="main-grid place-items-center">
+    {# Flashing message start here #}
+    {% for message in get_flashed_messages(request) %}
+        <div class="flash-{{ message.category }} bg-glass text-center">{{ message.message }}</div>
+    {% endfor %}
+    {# Flashing message end here #}
+    
+    <div class="account bg-glass">
+        
+    </div>
+</main>
+{% endblock %}

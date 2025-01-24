@@ -11,7 +11,6 @@ CLIENT_ORIGIN: list[str] = [
     "http://dreamyskysanctuary.com",
 ]
 
-
 BASE_DIR: str = os.getcwd()
 TEMPLATES_DIR: str = os.path.join(BASE_DIR, "templates")
 PUBLIC_DIR: str = os.path.join(BASE_DIR, "public")
@@ -28,6 +27,8 @@ TOKEN: str = dotenv.get_key(ENV_FILE, "DISCORD_TOKEN")
 SERVER_SECRET: str = dotenv.get_key(ENV_FILE, "SERVER_SECRET")
 ALGORITHM: str = "HS256"
 OTP_WINDOW: int = 2
+
+DISCORD_OWNER_ID: int = dotenv.get_key(ENV_FILE, "DISCORD_OWNER_ID")
 
 ALLOWED_FILE_TYPES: dict[str, str] = {
     "image/jpeg": "jpg", 

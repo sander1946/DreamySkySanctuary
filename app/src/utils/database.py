@@ -24,7 +24,7 @@ DATABASE_PORT = os.getenv("DATABASE_PORT")
 
 # Function to create MySQL database connection
 def create_connection(database_name: str) -> mysql.connector.connection.MySQLConnection:
-    logger.debug(f"Connecting to the database: {database_name}")
+    # logger.debug(f"Connecting to the database: {database_name}")
     connection = None
     try:
         connection: PooledMySQLConnection | MySQLConnectionAbstract = mysql.connector.connect(
@@ -49,12 +49,12 @@ def create_connection(database_name: str) -> mysql.connector.connection.MySQLCon
 # Close MySQL connection
 def close_connection(connection: PooledMySQLConnection | MySQLConnectionAbstract):
     if connection.is_connected():
-        logger.debug("Closing the database connection.")
+        # logger.debug("Closing the database connection.")
         connection.close()
     if connection.is_connected():
         logger.error("Failed to close the database connection.")
-    else:
-        logger.debug("Database connection closed.")
+    # else:
+        # logger.debug("Database connection closed.")
 
 
 # Insert query function
@@ -211,11 +211,28 @@ def get_user_by_username(connection: PooledMySQLConnection | MySQLConnectionAbst
     return None
 
 
+def get_user_by_email(connection: PooledMySQLConnection | MySQLConnectionAbstract, email: str) -> UserDB:
+    # logger.debug(f"Getting user: `{username}` from the database.")
+    query = "SELECT * FROM users WHERE email = %s"
+    values = (email,)
+    result = select_query(connection, query, values)
+    if result:
+        return UserDB(**result[0])
+    return None
+
+
 def create_user(connection: PooledMySQLConnection | MySQLConnectionAbstract, user: UserDB) -> None:
     logger.debug(f"Creating user: `{user.username}` in the database.")
     query = "INSERT INTO users (username, email, password_hash) VALUES (%s, %s, %s)"
     values = (user.username, user.email, user.password_hash)
     insert_query(connection, query, values)
+
+
+def update_user_details(connection: PooledMySQLConnection | MySQLConnectionAbstract, user: UserDB) -> None:
+    logger.debug(f"Updating user: `{user.username}` in the database.")
+    query = "UPDATE users SET email = %s, is_disabled = %s, is_admin = %s, password_hash = %s WHERE username = %s"
+    values = (user.email, user.is_disabled, user.is_admin, user.username, user.password_hash)
+    update_query(connection, query, values)
 
 
 def update_otp_user(connection: PooledMySQLConnection | MySQLConnectionAbstract, user: UserDB) -> None:
@@ -228,3 +245,41 @@ def update_otp_user(connection: PooledMySQLConnection | MySQLConnectionAbstract,
 def get_save_user(user: UserDB) -> User:
     return User(username=user.username, email=user.email, is_disabled=user.is_disabled, is_admin=user.is_admin,
                 otp_enabled=user.otp_enabled, otp_verified=user.otp_verified)
+
+
+def save_forgot_password_token(connection: PooledMySQLConnection | MySQLConnectionAbstract, user: UserDB, token: str) -> None:
+    logger.debug(f"Saving forgot password token for: `{user.email}` in the database.")
+    temp_token = get_forgot_password_token_from_username(connection, user.username)
+    if temp_token:
+        remove_forgot_password_token(connection, temp_token)
+    query = "INSERT INTO forgot_password (username, email, token) VALUES (%s, %s, %s)"
+    values = (user.username, user.email, token)
+    insert_query(connection, query, values)
+
+
+def get_forgot_password_token_from_username(connection: PooledMySQLConnection | MySQLConnectionAbstract, username: str) -> str:
+    logger.debug(f"Getting forgot password account: `{username}` from the database.")
+    query = "SELECT * FROM forgot_password WHERE username = %s"
+    values = (username,)
+    result = select_query(connection, query, values)
+    if result:
+        return result[0]["token"]
+    return None
+
+
+def get_forgot_password_account_from_token(connection: PooledMySQLConnection | MySQLConnectionAbstract, token: str) -> UserDB:
+    logger.debug(f"Getting forgot password token: `{token}` from the database.")
+    query = "SELECT * FROM forgot_password WHERE token = %s"
+    values = (token,)
+    result = select_query(connection, query, values)
+    if result:
+        user = get_user_by_username(connection, result[0]["username"])
+        return user
+    return None
+
+
+def remove_forgot_password_token(connection: PooledMySQLConnection | MySQLConnectionAbstract, token: str) -> None:
+    logger.debug(f"Removing forgot password token: `{token}` from the database.")
+    query = "DELETE FROM forgot_password WHERE token = %s"
+    values = (token,)
+    delete_query(connection, query, values)

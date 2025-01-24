@@ -1,9 +1,16 @@
 function validate_input(inputfield) {
-    // console.log(inputfield);
+    if (inputfield.id === 'form') {
+        var username = document.getElementById('username');
+        var email = document.getElementById('email');
+        var password = document.getElementById('password');
+        var password_rep = document.getElementById('password_rep');
+        var submit = validate_input(username) && validate_input(email) && validate_input(password) && validate_input(password_rep);
+        return submit;
+    }
     let input = inputfield.value;
     var warning_id = inputfield.id + "_warning";
     var warning = document.getElementById(warning_id);
-    // console.log(warning);
+
     if (input === "") {
         text = "";
     } else if (inputfield.id === 'username') {
@@ -14,7 +21,7 @@ function validate_input(inputfield) {
             text = "Username must be between 2 and 32 characters long and contain only letters, numbers, and underscores";
         }
     } else if (inputfield.id === 'email') {
-        var regex = new RegExp(".*@.*\..*");
+        var regex = new RegExp("..*@..*\\...*");
         if (regex.test(input)) {
             text = "";
         } else {
@@ -44,8 +51,10 @@ function validate_input(inputfield) {
     warning.innerHTML = text;
     if (text === "") {
         warning.style["display"] = "none";
+        return true;
     } else {
         warning.style["display"] = "block";
+        return false;
     }
 }
 

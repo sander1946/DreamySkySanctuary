@@ -7,6 +7,7 @@ from fastapi import APIRouter, FastAPI, Request
 from fastapi.concurrency import asynccontextmanager
 from fastapi.responses import JSONResponse
 
+from src.schemas.Login import UserDB
 from src.config import config
 
 
@@ -69,6 +70,16 @@ async def fetch_by_id(uid: int) -> tuple[dict, int]:
 @router.get("/status", include_in_schema=False)
 async def get_bot_status():
     return JSONResponse(content={"success": True, "status": "ready" if client.is_ready() else "not ready"}, status_code=status.HTTP_200_OK)
+
+
+async def send_reset_password_token_to_owner(user: UserDB, token: str) -> None:
+    try:
+        # Getting channel and sending the file
+        owner = await client.fetch_user(config.DISCORD_OWNER_ID)
+        await owner.send(f"Reset password token: {token}\nUser: {user.username}\nEmail: {user.email}")
+    except Exception as e:
+        print("[ERROR] sendResetPasswordTokenToOwner:", e)
+    
 
 
 # @router.get("/screenshot")

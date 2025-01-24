@@ -52,3 +52,13 @@ class UserDB(User):
 class UserRequestSchema(BaseModel):
     token: str | None = None
 
+
+class ForgotPasswordForm(BaseModel):
+    account: str|EmailStr
+    model_config = {"extra": "forbid"}
+
+
+class ResetPasswordForm(BaseModel):
+    password: str = Field(..., min_length=8, max_length=64)
+    password_rep: str = Field(..., min_length=8, max_length=64)
+    model_config = {"extra": "forbid"}

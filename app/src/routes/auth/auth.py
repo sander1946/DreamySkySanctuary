@@ -10,10 +10,11 @@ from fastapi_login.exceptions import InvalidCredentialsException, InsufficientSc
 import pyotp
 from werkzeug.security import generate_password_hash, check_password_hash
 
-from src.utils.flash import get_flashed_messages, flash
+from src.routes.bot.bot import send_reset_password_token_to_owner
+from src.utils.flash import get_flashed_messages, flash, FlashCategory
 from src.config import config
-from src.schemas.Login import LoginForm, RegisterForm, Scopes, User, UserDB, UserRequestSchema
-from src.utils.database import close_connection, create_connection, create_user, get_user_by_username, update_otp_user
+from src.schemas.Login import ForgotPasswordForm, LoginForm, RegisterForm, ResetPasswordForm, Scopes, User, UserDB, UserRequestSchema
+from src.utils.database import close_connection, create_connection, create_user, get_forgot_password_account_from_token, get_user_by_email, get_user_by_username, remove_forgot_password_token, save_forgot_password_token, update_otp_user, update_user_details
 
 import qrcode
 
@@ -70,7 +71,9 @@ def register(request: Request, register_data: Annotated[RegisterForm, Form()]):
     user = get_user_by_username(connection, username)
     
     if user:
-        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="User already exists")
+        flash(request, "A user by that username already exists. Try to login", FlashCategory.INFO.value)
+        return RedirectResponse(url="/login", status_code=status.HTTP_302_FOUND)
+        # raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="User already exists")
     
     userDB = UserDB(username=username, email=email, password_hash=password_hash)
     
@@ -225,4 +228,66 @@ def logout(request: Request, user: Annotated[UserDB, Security(login_manager)]):
 
 @router.get("/forgot-password")
 def forgot_password(request: Request):
-    return "You forgot your password"
+    return templates.TemplateResponse("auth/forgot-password.html", {"request": request})
+
+
+@router.post("/auth/forgot-password")
+async def forgot_password(request: Request, forgotForm: Annotated[ForgotPasswordForm, Form()]):
+    flash(request, "A password reset link has been sent to your email if it's associated with an account", FlashCategory.SUCCESS.value)
+    
+    if not forgotForm.account:
+        return RedirectResponse(url="/forgot-password", status_code=status.HTTP_302_FOUND)
+    
+    connection = create_connection("Website")
+    if forgotForm.account.find("@") != -1:
+        user: UserDB = get_user_by_email(connection, forgotForm.account)
+    else:
+        user: UserDB = get_user_by_username(connection, forgotForm.account)
+
+    if not user:
+        close_connection(connection)
+        return RedirectResponse(url="/forgot-password", status_code=status.HTTP_302_FOUND)
+    
+    reset_token = pyotp.random_base32(length=64)
+    
+    save_forgot_password_token(connection, user, reset_token)
+    
+    close_connection(connection)
+    
+    # TODO: send email with reset token
+    await send_reset_password_token_to_owner(user, reset_token)
+    
+    return RedirectResponse(url="/forgot-password", status_code=status.HTTP_302_FOUND)
+
+
+@router.get("/reset-password/{token}")
+def reset_password(request: Request, token: str):
+    connection = create_connection("Website")
+    user = get_forgot_password_account_from_token(connection, token)
+    close_connection(connection)
+    
+    if not user:
+        return RedirectResponse(url="/forgot-password", status_code=status.HTTP_302_FOUND)
+
+    return templates.TemplateResponse("auth/reset-password.html", {"request": request, "token": token})
+
+
+@router.post("/auth/reset-password/{token}")
+async def reset_password(request: Request, token: str, resetPasswordFrom: Annotated[ResetPasswordForm, Form()]):
+    
+    connection = create_connection("Website")
+    user = get_forgot_password_account_from_token(connection, token)
+    
+    if not user:
+        close_connection(connection)
+        return RedirectResponse(url="/forgot-password", status_code=status.HTTP_302_FOUND)
+    
+    user.password_hash = generate_password_hash(resetPasswordFrom.password)
+    
+    update_user_details(connection, user)
+    
+    remove_forgot_password_token(connection, token)
+    
+    close_connection(connection)
+    
+    return RedirectResponse(url="/login", status_code=status.HTTP_302_FOUND)
