@@ -9,7 +9,7 @@ from mysql.connector.abstracts import MySQLConnectionAbstract
 from mysql.connector.pooling import PooledMySQLConnection
 
 # local imports
-from src.schemas.Login import UserDB
+from src.schemas.Login import User, UserDB
 from src.schemas.ImageGalleryLink import ImageGalleryLink
 from src.schemas.GalleryData import GalleryData
 from src.schemas.ImageData import ImageData
@@ -59,7 +59,7 @@ def close_connection(connection: PooledMySQLConnection | MySQLConnectionAbstract
 
 # Insert query function
 def insert_query(connection: PooledMySQLConnection | MySQLConnectionAbstract, query, values):
-    logger.debug(f"Inserting data into the database: {values}")
+    # logger.debug(f"Inserting data into the database: {values}") # Commented out to reduce log verbosity
     cursor = connection.cursor()
     try:
         cursor.execute(query, values)
@@ -70,7 +70,7 @@ def insert_query(connection: PooledMySQLConnection | MySQLConnectionAbstract, qu
 
 # Select query function
 def select_query(connection: PooledMySQLConnection | MySQLConnectionAbstract, query, values=None):
-    logger.debug(f"Selecting data from the database: {query}")
+    # logger.debug(f"Selecting data from the database: {query}") # Commented out to reduce log verbosity
     cursor = connection.cursor(dictionary=True)
     try:
         cursor.execute(query, values)
@@ -82,7 +82,7 @@ def select_query(connection: PooledMySQLConnection | MySQLConnectionAbstract, qu
 
 # Update query function
 def update_query(connection: PooledMySQLConnection | MySQLConnectionAbstract, query, values):
-    logger.debug(f"Updating data in the database: {values}")
+    # logger.debug(f"Updating data in the database: {values}") # Commented out to reduce log verbosity
     cursor = connection.cursor()
     try:
         cursor.execute(query, values)
@@ -93,7 +93,7 @@ def update_query(connection: PooledMySQLConnection | MySQLConnectionAbstract, qu
 
 # Delete query function
 def delete_query(connection: PooledMySQLConnection | MySQLConnectionAbstract, query, values):
-    logger.debug(f"Deleting data from the database: {values}")
+    # logger.debug(f"Deleting data from the database: {values}") # Commented out to reduce log verbosity
     cursor = connection.cursor()
     try:
         cursor.execute(query, values)
@@ -110,7 +110,7 @@ def add_image_to_db(connection: PooledMySQLConnection | MySQLConnectionAbstract,
 
 
 def get_image_from_db(connection: PooledMySQLConnection | MySQLConnectionAbstract, filename: str) -> ImageData | None:
-    logger.debug(f"Getting image: `{filename}` from the database.")
+    # logger.debug(f"Getting image: `{filename}` from the database.")
     query = "SELECT * FROM images WHERE filename = %s"
     values = (filename,)
     result = select_query(connection, query, values)
@@ -120,7 +120,7 @@ def get_image_from_db(connection: PooledMySQLConnection | MySQLConnectionAbstrac
 
 
 def remove_image_from_db(connection: PooledMySQLConnection | MySQLConnectionAbstract, filename: str) -> None:
-    logger.debug(f"Removing {filename} from the database.")
+    logger.debug(f"Removing image: `{filename}` from the database.")
     query = "DELETE FROM images WHERE filename = %s"
     values = (filename,)
     delete_query(connection, query, values)
@@ -134,7 +134,7 @@ def add_gallery_to_db(connection: PooledMySQLConnection | MySQLConnectionAbstrac
 
 
 def get_gallery_from_db(connection: PooledMySQLConnection | MySQLConnectionAbstract, gallery_code: str) -> GalleryData | None:
-    logger.debug(f"Getting gallery: `{gallery_code}` from the database.")
+    # logger.debug(f"Getting gallery: `{gallery_code}` from the database.")
     query = "SELECT * FROM galleries WHERE gallery_code = %s"
     values = (gallery_code,)
     result = select_query(connection, query, values)
@@ -144,7 +144,7 @@ def get_gallery_from_db(connection: PooledMySQLConnection | MySQLConnectionAbstr
 
 
 def remove_gallery_from_db(connection: PooledMySQLConnection | MySQLConnectionAbstract, gallery_code: str) -> None:
-    logger.debug(f"Removing {gallery_code} from the database.")
+    logger.debug(f"Removing gallery: `{gallery_code}` from the database.")
     query = "DELETE FROM galleries WHERE gallery_code = %s"
     values = (gallery_code,)
     delete_query(connection, query, values)
@@ -158,7 +158,7 @@ def add_image_gallery_link_to_db(connection: PooledMySQLConnection | MySQLConnec
 
 
 def get_image_gallery_links_from_db(connection: PooledMySQLConnection | MySQLConnectionAbstract, gallery_code: str) -> list[ImageGalleryLink]:
-    logger.debug(f"Getting links: `{gallery_code}` from the database.")
+    # logger.debug(f"Getting links: `{gallery_code}` from the database.")
     query = "SELECT * FROM links WHERE gallery_code = %s"
     values = (gallery_code,)
     result = select_query(connection, query, values)
@@ -168,21 +168,21 @@ def get_image_gallery_links_from_db(connection: PooledMySQLConnection | MySQLCon
 
 
 def remove_gallery_links_from_db(connection: PooledMySQLConnection | MySQLConnectionAbstract, gallery_code: str) -> None:
-    logger.debug(f"Removing {gallery_code}'s links from the database.")
+    logger.debug(f"Removing gallery-`{gallery_code}`'s links from the database.")
     query = "DELETE FROM links WHERE gallery_code = %s"
     values = (gallery_code,)
     delete_query(connection, query, values)
 
 
 def remove_image_links_from_db(connection: PooledMySQLConnection | MySQLConnectionAbstract, filename: str) -> None:
-    logger.debug(f"Removing {filename}'s links from the database.")
+    logger.debug(f"Removing image-`{filename}`'s links from the database.")
     query = "DELETE FROM links WHERE filename = %s"
     values = (filename,)
     delete_query(connection, query, values)
 
 
 def get_images_of_gallery_from_db(connection: PooledMySQLConnection | MySQLConnectionAbstract, gallery_code: str) -> list[ImageData]:
-    logger.debug(f"Getting images of gallery: `{gallery_code}` from the database.")
+    # logger.debug(f"Getting images of gallery: `{gallery_code}` from the database.")
     links = get_image_gallery_links_from_db(connection, gallery_code)
     images = []
     for link in links:
@@ -192,7 +192,7 @@ def get_images_of_gallery_from_db(connection: PooledMySQLConnection | MySQLConne
 
 
 def get_user_by_id(connection: PooledMySQLConnection | MySQLConnectionAbstract, user_id: int) -> UserDB:
-    logger.debug(f"Getting user: `{user_id}` from the database.")
+    # logger.debug(f"Getting user: `{user_id}` from the database.")
     query = "SELECT * FROM users WHERE id = %s"
     values = (user_id,)
     result = select_query(connection, query, values)
@@ -202,7 +202,7 @@ def get_user_by_id(connection: PooledMySQLConnection | MySQLConnectionAbstract, 
 
 
 def get_user_by_username(connection: PooledMySQLConnection | MySQLConnectionAbstract, username: str) -> UserDB:
-    logger.debug(f"Getting user: `{username}` from the database.")
+    # logger.debug(f"Getting user: `{username}` from the database.")
     query = "SELECT * FROM users WHERE username = %s"
     values = (username,)
     result = select_query(connection, query, values)
@@ -223,3 +223,8 @@ def update_otp_user(connection: PooledMySQLConnection | MySQLConnectionAbstract,
     query = "UPDATE users SET otp_base32 = %s, otp_auth_url = %s, otp_enabled = %s, otp_verified = %s WHERE username = %s"
     values = (user.otp_base32, user.otp_auth_url, user.otp_enabled, user.otp_verified, user.username)
     update_query(connection, query, values)
+
+
+def get_save_user(user: UserDB) -> User:
+    return User(username=user.username, email=user.email, is_disabled=user.is_disabled, is_admin=user.is_admin,
+                otp_enabled=user.otp_enabled, otp_verified=user.otp_verified)

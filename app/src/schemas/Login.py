@@ -27,8 +27,11 @@ class RegisterForm(LoginForm):
 class User(BaseModel):
     username: str = Field(..., min_length=2, max_length=32)
     email: EmailStr
-    disabled: Optional[bool] = False
+    is_disabled: Optional[bool] = False
     is_admin: Optional[bool] = False
+    
+    otp_enabled: bool = False
+    otp_verified: bool = False
     
     class Config:
         from_attributes = True
@@ -38,9 +41,6 @@ class UserDB(User):
     password_hash: str = Field(..., max_length=256)
     created_at: Optional[datetime] = None
     updated_at: Optional[datetime] = None
-    
-    otp_enabled: bool = False
-    otp_verified: bool = False
 
     otp_base32: str | None = None
     otp_auth_url: str | None = None
