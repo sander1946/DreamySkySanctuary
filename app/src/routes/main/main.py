@@ -27,16 +27,7 @@ async def main(request: Request, response: Response):
         description = "This is a test announcement to show how the announcements are displayed.",
         date = datetime.now() - timedelta(days=1),
         image = "/public/imgs/flags/en.png"),
-    ]
-    flash(request, "This is a test flash message", FlashCategory.PRIMARY.value)
-    flash(request, "This is a test flash message", FlashCategory.SECONDARY.value)
-    flash(request, "This is a test flash message", FlashCategory.SUCCESS.value)
-    flash(request, "This is a test flash message", FlashCategory.DANGER.value)
-    flash(request, "This is a test flash message", FlashCategory.WARNING.value)
-    flash(request, "This is a test flash message", FlashCategory.INFO.value)
-    flash(request, "This is a test flash message", FlashCategory.LIGHT.value)
-    flash(request, "This is a test flash message", FlashCategory.DARK.value)
-    flash(request, "This is a test flash message", FlashCategory.GLASS.value)
+    ]    
     
     return templates.TemplateResponse(name="main/main.html", context={"request": request, "announcements": announcements})
 
