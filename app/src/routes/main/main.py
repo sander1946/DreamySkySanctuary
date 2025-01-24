@@ -1,4 +1,4 @@
-from src.utils.flash import flash
+from src.utils.flash import FlashCategory, flash
 from src.utils.refresh_team_file import get_team_data
 from src.dependencies import *
 from src.schemas.announcement import Announcement
@@ -29,7 +29,16 @@ async def main(request: Request, response: Response):
         date = datetime.now() - timedelta(days=1),
         image = "/public/imgs/flags/en.png"),
     ]
-    flash(request, "This is a test flash message", "info")
+    flash(request, "This is a test flash message", FlashCategory.PRIMARY.value)
+    flash(request, "This is a test flash message", FlashCategory.SECONDARY.value)
+    flash(request, "This is a test flash message", FlashCategory.SUCCESS.value)
+    flash(request, "This is a test flash message", FlashCategory.DANGER.value)
+    flash(request, "This is a test flash message", FlashCategory.WARNING.value)
+    flash(request, "This is a test flash message", FlashCategory.INFO.value)
+    flash(request, "This is a test flash message", FlashCategory.LIGHT.value)
+    flash(request, "This is a test flash message", FlashCategory.DARK.value)
+    flash(request, "This is a test flash message", FlashCategory.GLASS.value)
+    
     return templates.TemplateResponse(name="main/main.html", context={"request": request, "announcements": announcements})
 
 

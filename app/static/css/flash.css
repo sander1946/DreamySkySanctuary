@@ -1,0 +1,54 @@
+.flash-primary {
+    background-color: rgba(70, 203, 255, 0.6) !important;
+    color: white !important;
+    border: 1px solid rgba(70, 203, 255, 0.6) !important;
+}
+
+.flash-secondary {
+    background-color: rgba(124, 185, 209, 0.6) !important;
+    color: white !important;
+    border: 1px solid rgba(124, 185, 209, 0.6) !important;
+}
+
+.flash-success {
+    background-color: rgba(35, 251, 237, 0.6) !important;
+    color: white !important;
+    border: 1px solid rgba(35, 251, 237, 0.6) !important;
+}
+
+.flash-danger {
+    background-color: rgba(255, 70, 70, 0.6) !important;
+    color: white !important;
+    border: 1px solid rgba(255, 70, 70, 0.6) !important;
+}
+
+.flash-warning {
+    background-color: rgba(255, 255, 70, 0.6) !important;
+    color: white !important;
+    border: 1px solid rgba(255, 255, 70, 0.6) !important;
+}
+
+.flash-info {
+    background-color: rgba(70, 203, 255, 0.6) !important;
+    color: white !important;
+    border: 1px solid rgba(70, 203, 255, 0.6) !important;
+}
+
+.flash-light {
+    background-color: rgba(255, 255, 255, 0.6) !important;
+    color: white !important;
+    border: 1px solid rgba(255, 255, 255, 0.6) !important;
+}
+
+.flash-dark {
+    background-color: rgba(0, 0, 0, 0.6) !important;
+    color: white !important;
+    border: 1px solid rgba(0, 0, 0, 0.6) !important;
+}
+
+
+.flash-primary, .flash-secondary, .flash-success, .flash-danger, .flash-warning, .flash-info, .flash-light, .flash-dark, .flash-glass {
+    grid-area: Flash;
+    padding: 10px;
+    text-align: center;
+}

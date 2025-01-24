@@ -1,0 +1,112 @@
+@import url(/static/css/main.css);
+@import url(/static/css/register.css);
+
+.place-items-center {
+    place-items: center;
+}
+
+.login {
+    grid-area: Login;
+    min-width: 260px;
+    max-width: 500px;
+    width: 100%;
+}
+
+.warning-text {
+    text-align: center !important;
+    color: #ffe1e1;
+    background: #ff00002b;
+    border-radius: 10px;
+}
+
+.login-button-wrapper {
+    margin: 10px;
+    padding: 15px;
+    background: #0052f8ad;
+    border-color: #0052f8ad;
+    /* width: 300px; */
+    border-radius: 10px;
+    /* max-width: 700px;
+    min-width: 300px; */
+}
+
+.warning-wrapper {
+    margin: 10px;
+    padding: 15px;
+    background: #ffffff20;
+    /* width: 300px; */
+    border-radius: 10px;
+    /* max-width: 700px;
+    min-width: 300px; */
+}
+
+.login-button-wrapper:hover {
+    background: #0011f8ad;
+    border-color: #0011f8ad;
+}
+
+.custom-form-control {
+    display: block;
+    padding: .375rem .75rem;
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: var(--bs-body-color);
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-color: var(--bs-body-bg);
+    background-clip: padding-box;
+    border: var(--bs-border-width) solid var(--bs-border-color);
+    border-radius: var(--bs-border-radius);
+    transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+}
+
+.show-password {
+    margin-top: -38px;
+    cursor: pointer;
+    margin-left: 70.333%;
+    width: fit-content;
+}
+
+.main-grid {
+    display: grid;
+    gap: 0px;
+    padding: 10px;
+    width: 98vw;
+    grid-template-areas: 
+        'Flash ' 
+        'Login ' 
+        'Filler';
+    height: 70vh;
+}
+
+@media (min-width: 1000px) and (max-width: 1200px) {
+    .main-grid {
+        grid-template-columns: auto;
+        grid-template-areas: 
+            'Flash ' 
+            'Login ' 
+            'Filler';
+    }
+}
+
+@media (min-width: 1200px) and (max-width: 1400px) {
+    .main-grid {
+        grid-template-columns: auto;
+        grid-template-areas: 
+            'Flash ' 
+            'Login ' 
+            'Filler';
+    }
+}
+
+@media (min-width: 1400px) {
+    .main-grid {
+        grid-template-columns: auto;
+        grid-template-areas: 
+            'Flash ' 
+            'Login ' 
+            'Filler';
+    }
+}

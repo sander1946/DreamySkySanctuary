@@ -1,3 +1,4 @@
+@import url(/static/css/flash.css);
 :root {
   --background_img: url(/public/imgs/bg_aeri.jpg);
 }
@@ -106,26 +107,26 @@
   gap: 15px;
   padding: 10px;
   width: 98vw;
-  grid-template-areas: 'Youtube' 'Announcement' 'Us';
+  grid-template-areas: 'Flash' 'Youtube' 'Announcement' 'Us';
 }
 
 @media (min-width: 1000px) and (max-width: 1200px) {
   .main-grid {
     grid-template-columns: auto 300px;
-    grid-template-areas: 'Youtube Announcement' 'Us Announcement';
+    grid-template-areas: 'Flash Flash' 'Youtube Announcement' 'Us Announcement';
   }
 }
 
 @media (min-width: 1200px) and (max-width: 1400px) {
   .main-grid {
     grid-template-columns: auto 450px;
-    grid-template-areas: 'Youtube Announcement' 'Us Announcement';
+    grid-template-areas: 'Flash Flash' 'Youtube Announcement' 'Us Announcement';
   }
 }
 
 @media (min-width: 1400px) {
   .main-grid {
     grid-template-columns: auto 600px;
-    grid-template-areas: 'Youtube Announcement' 'Us Announcement';
+    grid-template-areas: 'Flash Flash' 'Youtube Announcement' 'Us Announcement';
   }
 }

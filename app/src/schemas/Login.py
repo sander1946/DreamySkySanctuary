@@ -2,6 +2,14 @@
 from typing import Optional
 from datetime import datetime
 from pydantic import BaseModel, EmailStr, Field
+from enum import Enum
+
+
+class Scopes(str, Enum):
+    BASIC = "basic"
+    ADMIN = "admin"
+    OTP_CHECKED = "otp_checked"
+    
 
 
 class LoginForm(BaseModel):
@@ -11,15 +19,14 @@ class LoginForm(BaseModel):
 
 
 class RegisterForm(LoginForm):
+    password_rep: str = Field(..., min_length=8, max_length=64)
     email: EmailStr
-    discord: Optional[str] = Field(None, min_length=3, max_length=32)
     model_config = {"extra": "forbid"}
 
 
 class User(BaseModel):
     username: str = Field(..., min_length=2, max_length=32)
     email: EmailStr
-    discord: Optional[str] = Field(None, min_length=3, max_length=32)
     disabled: Optional[bool] = False
     is_admin: Optional[bool] = False
     
@@ -43,6 +50,5 @@ class UserDB(User):
 
 
 class UserRequestSchema(BaseModel):
-    username: str = Field(..., min_length=2, max_length=32)
     token: str | None = None
 

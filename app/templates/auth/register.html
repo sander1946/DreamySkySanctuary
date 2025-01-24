@@ -1,0 +1,57 @@
+{% extends "base.html" %} 
+
+{% block custom_css %}
+<!-- Bootstrap CSS -->
+<link href="/static/css/bootstrap/bootstrap.min.css" rel="stylesheet" />
+<link rel="stylesheet" href="/static/icons/font/bootstrap-icons.css" />
+<link href="/static/css/register.css" rel="stylesheet" />
+{% endblock %} 
+
+{% block title %}
+Login
+{% endblock %}
+
+{% block content %}
+<div class="background">
+</div>
+
+<main class="main-grid place-items-center">
+    <div class="login bg-glass">
+        <form action="/auth/register" method="POST" enctype="multipart/form-data" class="login-form row row-cols-1 align-items-center justify-content-center">
+            <h1 class="col-12 display-3 text-center">Register</h1>
+            <div class="col-12 row align-items-center justify-content-center">
+                <label for="username" class="lead col-10 mb-2 form-label">Username:</label>
+                <input type="username" id="username" name="username" class="col-10 custom-form-control" onKeyUp="validate_input(this);" placeholder="JohnDoe2" required/>
+                <div id="username_warning" class="warning-text text-end col-10 form-text mb-3" style="display:none"></div>
+            </div>
+
+            <div class="col-12 row align-items-center justify-content-center">
+                <label for="email" class="lead col-10 mb-2 form-label">Email:</label>
+                <input type="email" id="email" name="email" class="col-10 custom-form-control" onKeyUp="validate_input(this);" placeholder="John@DreamySkySanctuary.com"required />
+                <div id="email_warning" class="warning-text text-end col-10 form-text mb-3" style="display:none"></div>
+            </div>
+
+            <div class="col-12 row align-items-center justify-content-center">
+                <label for="password" class="lead col-10 mb-2 form-label">Password:</label>
+                <input type="password" id="password" name="password" class="col-10 custom-form-control" onKeyUp="validate_input(this); validate_input(document.getElementById('password_rep'));" placeholder="************" required />
+                <div class="show-password text-end col-10 form-text"><a onclick="showPassword(this);" class="custom-link" style="color: #000000c0"><i class="password_icon bi bi-eye-fill"></i></a></div>
+                <div id="password_warning" class="warning-text text-end col-10 form-text mb-3" style="display:none"></div>
+            </div>
+
+            <div class="col-12 row align-items-center justify-content-center">
+                <label for="password_rep" class="lead col-10 mb-2 form-label">Repeat Password:</label>
+                <input type="password" id="password_rep" name="password_rep" class="col-10 custom-form-control" onKeyUp="validate_input(this);" placeholder="************" required />
+                <div class="show-password text-end col-10 form-text"><a onclick="showPassword(this);" class="custom-link" style="color: #000000c0"><i class="password_icon bi bi-eye-fill"></i></a></div>
+                <div id="password_rep_warning" class="warning-text text-end col-10 form-text mb-4" style="display:none"></div>
+            </div>
+            <div class="col-12 row align-items-center justify-content-center">
+                <button type="submit" class="col-10 login-button-wrapper btn btn-primary">Register</button>
+
+                <p class="text-center">Already have an account? <a href="/login" class="custom-link">Sign In Here</a></p>
+            </div>
+        </form>
+    </div>
+
+    <script src="/static/js/register.js"></script>
+</main>
+{% endblock %}

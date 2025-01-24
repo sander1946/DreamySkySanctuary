@@ -20,13 +20,14 @@ UPLOAD_DIR: str = os.path.join(BASE_DIR, "upload")
 
 UPLOAD_EXPIRE_TIME: int = 60 * 60 * 24 * 31  # 31 days / 1 month
 TEAM_EXPIRE_TIME: int = 60 * 60 * 2 # 24 hours / 1 day
-ACCESS_TOKEN_EXPIRE_MINUTES: timedelta = timedelta(minutes=30)
+ACCESS_TOKEN_EXPIRE_MINUTES: timedelta = timedelta(hours=6)
 
 ENV_FILE: str = os.path.join(BASE_DIR, ".env")
 TOKEN: str = dotenv.get_key(ENV_FILE, "DISCORD_TOKEN")
 
 SERVER_SECRET: str = dotenv.get_key(ENV_FILE, "SERVER_SECRET")
 ALGORITHM: str = "HS256"
+OTP_WINDOW: int = 2
 
 ALLOWED_FILE_TYPES: dict[str, str] = {
     "image/jpeg": "jpg", 

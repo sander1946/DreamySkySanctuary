@@ -1,0 +1,48 @@
+{% extends "base.html" %} 
+
+{% block custom_css %}
+<!-- Bootstrap CSS -->
+<link href="/static/css/bootstrap/bootstrap.min.css" rel="stylesheet" />
+<link rel="stylesheet" href="/static/icons/font/bootstrap-icons.css" />
+<link href="/static/css/login.css" rel="stylesheet" />
+{% endblock %} 
+
+{% block title %}
+Login
+{% endblock %}
+
+{% block content %}
+<div class="background">
+</div>
+
+<main class="main-grid place-items-center">
+    {# Flashing message start here #}
+    {% for message in get_flashed_messages(request) %}
+        <div class="flash-{{ message.category }} bg-glass text-center">{{ message.message }}</div>
+    {% endfor %}
+    {# Flashing message end here #}
+    
+    <div class="login bg-glass">
+        <form action="/auth/login" method="POST" enctype="multipart/form-data" class="login-form row row-cols-1 align-items-center justify-content-center">
+            <h1 class="col-12 display-3 text-center">Login</h1>
+            <div class="col-12 row align-items-center justify-content-center">
+                <label for="username" class="lead col-10 mb-2 form-label">Username:</label>
+                <input type="username" id="username" name="username" class="col-10 custom-form-control" placeholder="JohnDoe2" required/>
+            </div>
+
+            <div class="col-12 row align-items-center justify-content-center">
+                <label for="password" class="lead col-10 mb-2 form-label">Password:</label>
+                <input type="password" id="password" name="password" class="col-10 custom-form-control" placeholder="************" required />
+                <div class="show-password text-end col-10 form-text"><a onclick="showPassword(this);" class="custom-link" style="color: #000000c0"><i class="password_icon bi bi-eye-fill"></i></a></div>
+                <div class="text-end col-10 form-text mb-3"><a href="/forgot-password" class="custom-link">Forgot Password?</a></div>
+            </div>
+
+            <button class="col-10 login-button-wrapper btn btn-primary">Login</button>
+
+            <p class="text-center">Need an account? <a href="/register" class="custom-link">Sign Up Here</a></p>
+        </form>
+    </div>
+
+    <script src="/static/js/login.js"></script>
+</main>
+{% endblock %}

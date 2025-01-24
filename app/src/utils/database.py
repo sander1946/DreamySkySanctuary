@@ -213,8 +213,8 @@ def get_user_by_username(connection: PooledMySQLConnection | MySQLConnectionAbst
 
 def create_user(connection: PooledMySQLConnection | MySQLConnectionAbstract, user: UserDB) -> None:
     logger.debug(f"Creating user: `{user.username}` in the database.")
-    query = "INSERT INTO users (username, email, discord, password_hash) VALUES (%s, %s, %s, %s)"
-    values = (user.username, user.email, user.discord, user.password_hash)
+    query = "INSERT INTO users (username, email, password_hash) VALUES (%s, %s, %s)"
+    values = (user.username, user.email, user.password_hash)
     insert_query(connection, query, values)
 
 

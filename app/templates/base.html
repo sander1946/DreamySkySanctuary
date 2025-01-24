@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <title>{% block title %} {% endblock %}</title>
+        <title>{% block title %} Home {% endblock %} | Dreamy Sky Sanctuary</title>
 
         <!-- Meta tags -->
         <link rel="icon" type="image/x-icon" href="/public/imgs/favicon.ico">
@@ -11,6 +11,10 @@
             <meta name="viewport" content="width=device-width, initial-scale=1">
         {% endblock %}
 
+        {% block ajax %}
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+        {% endblock %}
+        
         <!-- Custom CSS -->
         {% block custom_css %} 
             <!-- Bootstrap CSS -->

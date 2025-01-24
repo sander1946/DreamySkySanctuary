@@ -168,6 +168,7 @@ grid-template-areas:
     .main-grid {
         grid-template-columns: auto;
         grid-template-areas: 
+            'Flash'
             'Upload' 
             'Viewer';
     }
@@ -177,6 +178,7 @@ grid-template-areas:
     .main-grid {
         grid-template-columns: auto;
         grid-template-areas: 
+            'Flash'
             'Upload' 
             'Viewer';
     }
@@ -186,6 +188,7 @@ grid-template-areas:
     .main-grid {
         grid-template-columns: auto;
         grid-template-areas: 
+            'Flash'
             'Upload' 
             'Viewer';
     }

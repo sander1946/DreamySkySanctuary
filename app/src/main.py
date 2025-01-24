@@ -12,6 +12,7 @@ from src.schemas.errors.FileNotFoundException import FileNotFoundException
 from src.schemas.errors.FileTypeException import FileTypeException
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.middleware.sessions import SessionMiddleware
+from fastapi_login.exceptions import InvalidCredentialsException, InsufficientScopeException
 import http
 from jinja2 import Environment
 
@@ -57,20 +58,29 @@ async def http_exception_handler(request, exc: StarletteHTTPException):
         return templates.TemplateResponse(
             name="error/error.html",
             context=context,
-            status_code=exc.status_code
+            status_code=exc.status_code,
+            headers=exc.headers,
         )
     
     if http_status.is_server_error:
         return templates.TemplateResponse(
             name="error/error.html",
             context=context,
-            status_code=exc.status_code
+            status_code=exc.status_code,
+            headers=exc.headers,
         )
 
-@app.exception_handler(NotAuthenticatedException)
-def exc_handler(request, exc):
-    pass
-    # return RedirectResponse(request.headers.get('referer') if request.headers.get('referer').startswith(str(request.base_url)) else "/upload", status_code=status.HTTP_303_SEE_OTHER)
+# @app.exception_handler(InvalidCredentialsException)
+# def invalid_credentials_handler(request, exc: HTTPException):
+#     pass
+#     # return RedirectResponse(request.headers.get('referer') if request.headers.get('referer').startswith(str(request.base_url)) else "/upload", status_code=status.HTTP_303_SEE_OTHER)
+
+
+# @app.exception_handler(InsufficientScopeException)
+# def insufficient_scope_handler(request, exc: HTTPException):
+#     pass
+#     # return RedirectResponse(request.headers.get('referer') if request.headers.get('referer').startswith(str(request.base_url)) else "/upload", status_code=status.HTTP_303_SEE_OTHER)
+
 
 
 @app.exception_handler(ValueError)
@@ -84,7 +94,8 @@ async def validation_exception_handler(request, exc: RequestValidationError):
     return templates.TemplateResponse(
         name="error/error.html",
         context={"request": request, "error": exc, "http_status": http_status},
-        status_code=status.HTTP_400_BAD_REQUEST
+        status_code=status.HTTP_404_NOT_FOUND,
+        headers=exc.headers,
     )
 
 @app.exception_handler(FileTypeException)
@@ -97,6 +108,7 @@ async def unicorn_exception_handler(request: Request, exc: FileTypeException):
             "file_type": exc.file_type,
             "allowed_types": exc.allowed_types,
         },
+        headers=exc.headers,
     )
 
 @app.exception_handler(FileNotFoundException)
@@ -109,7 +121,9 @@ async def unicorn_exception_handler(request: Request, exc: FileNotFoundException
     #         "file_path": exc.file_path,
     #     },
     # )
-    return RedirectResponse(url="/upload", status_code=status.HTTP_307_TEMPORARY_REDIRECT) # redirect to home page if 3xx is raised
+    return RedirectResponse(url="/upload", 
+                            status_code=status.HTTP_307_TEMPORARY_REDIRECT,
+                            headers=exc.headers,) # redirect to home page if 3xx is raised
 
 @app.on_event("startup")
 @repeat_every(seconds=60*60)  # check every hour for expired files
@@ -123,7 +137,7 @@ async def error_page(request: Request, code: int):
     return templates.TemplateResponse(
         name="error/error.html",
         context={"request": request, "error": code, "http_status": http_status},
-        status_code=code
+        status_code=code,
     )
 
 @app.get("/redirect/{code}")
