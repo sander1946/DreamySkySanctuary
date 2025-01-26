@@ -518,7 +518,7 @@ def change_username(request: Request, user: Annotated[UserDB, Security(login_man
             "success": True, 
             "detail": "Username has been changed successfully",
             "user": user.username,
-            "redirect": "/account"
+            "redirect": "/login"
             },
         status_code=status.HTTP_200_OK
         )
