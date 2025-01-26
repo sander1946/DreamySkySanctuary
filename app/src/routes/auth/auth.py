@@ -1,11 +1,9 @@
-import io
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, Form, HTTPException, Request, Security, status
-from fastapi.responses import FileResponse, HTMLResponse, RedirectResponse, StreamingResponse
+from fastapi import APIRouter, Depends, Form, Request, Security, status
+from fastapi.responses import JSONResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 from fastapi_login import LoginManager
-from fastapi_login.exceptions import InvalidCredentialsException, InsufficientScopeException
 
 import pyotp
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -13,7 +11,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from src.routes.bot.bot import send_reset_password_token_to_owner
 from src.utils.flash import get_flashed_messages, flash, FlashCategory
 from src.config import config
-from src.schemas.Login import ForgotPasswordForm, LoginForm, RegisterForm, ResetPasswordForm, Scopes, User, UserDB, UserRequestSchema
+from src.schemas.Login import ForgotPasswordForm, LoginForm, RegisterForm, ResetPasswordForm, Scopes, UserDB, UserRequestSchema
 from src.utils.database import close_connection, create_connection, create_user, get_forgot_password_account_from_token, get_user_by_email, get_user_by_username, remove_forgot_password_token, save_forgot_password_token, update_otp_user, update_user_details
 
 import qrcode
@@ -23,6 +21,7 @@ login_manager.cookie_name = "user_token"
 
 templates = Jinja2Templates(directory=config.TEMPLATES_DIR)
 templates.env.globals["get_flashed_messages"] = get_flashed_messages
+templates.env.globals["FlashCategory"] = FlashCategory
 
 router = APIRouter(
     prefix="",
@@ -36,7 +35,9 @@ def get_user_access_cookie(user: UserDB):
         scopes.append(Scopes.OTP_CHECKED.value)
     
     access_token = login_manager.create_access_token(
-        data={"sub": user.username},
+        data={
+            "sub": user.username
+            },
         expires=config.ACCESS_TOKEN_EXPIRE_MINUTES,
         scopes=scopes,
     )
@@ -61,7 +62,7 @@ def register_page(request: Request):
 
 
 @router.post("/auth/register")
-def register(request: Request, register_data: Annotated[RegisterForm, Form()]):
+def register(request: Request, register_data: Annotated[RegisterForm, Form(media_type="application/x-www-form-urlencoded")]):
     username = register_data.username
     email = register_data.email
     password = register_data.password
@@ -71,18 +72,35 @@ def register(request: Request, register_data: Annotated[RegisterForm, Form()]):
     user = get_user_by_username(connection, username)
     
     if user:
-        flash(request, "A user by that username already exists. Try to login", FlashCategory.INFO.value)
-        return RedirectResponse(url="/login", status_code=status.HTTP_302_FOUND)
-        # raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="User already exists")
+        print(f"User already exists: {user.username}")
+        return JSONResponse(
+            content={
+                "success": False, 
+                "detail": "A user by that username already exists. Chose a diffrent username or try to login", 
+                "category": FlashCategory.INFO.value, 
+                "user": user.username
+                },
+            status_code=status.HTTP_202_ACCEPTED
+        )
     
     userDB = UserDB(username=username, email=email, password_hash=password_hash)
     
     create_user(connection, userDB)
     close_connection(connection)
     
-    response = RedirectResponse(url="/account", status_code=status.HTTP_302_FOUND)
+    print(f"User created: {userDB.username}")
+    
+    response = JSONResponse(
+        content={
+            "success": True, 
+            "user": username,
+            "redirect": "/account"
+            }, 
+        status_code=status.HTTP_201_CREATED
+        )
     login_manager.set_cookie(response, get_user_access_cookie(userDB))
     return response
+
 
 
 @router.get("/login")
@@ -91,21 +109,43 @@ def login_page(request: Request):
 
 
 @router.post("/auth/login")
-def login(request: Request, login_data: Annotated[LoginForm, Form()]):
+def login(request: Request, login_data: Annotated[LoginForm, Form(media_type="application/x-www-form-urlencoded")]):
     username = login_data.username
     password = login_data.password
     
     user: UserDB = load_user(username)
     
     if not user:
-        flash(request, "The username or password is incorrect", "warning")
-        return RedirectResponse(url="/login", status_code=status.HTTP_302_FOUND)
+        return JSONResponse(
+            content={
+                "success": False, 
+                "detail": "The username or password is incorrect", 
+                "category": FlashCategory.WARNING.value, 
+                "user": username
+                },
+            status_code=status.HTTP_401_UNAUTHORIZED
+        )
     
     if not check_user_password(user, password):
-        flash(request, "The username or password is incorrect", "warning")
-        return RedirectResponse(url="/login", status_code=status.HTTP_302_FOUND)
+        return JSONResponse(
+            content={
+                "success": False, 
+                "detail": "The username or password is incorrect", 
+                "category": FlashCategory.WARNING.value, 
+                "user": username
+                },
+            status_code=status.HTTP_401_UNAUTHORIZED
+        )
     
-    response = RedirectResponse(url="/account", status_code=status.HTTP_302_FOUND)
+    response = JSONResponse(
+        content={
+            "success": True, 
+            "user": user.username,
+            "redirect": "/account"
+            }, 
+        status_code=status.HTTP_200_OK
+        )
+    
     login_manager.set_cookie(response, get_user_access_cookie(user))
     return response
 
@@ -114,13 +154,20 @@ def login(request: Request, login_data: Annotated[LoginForm, Form()]):
 def Generate_OTP(request: Request, user: UserDB = Depends(login_manager)):
     
     if user.otp_enabled and user.otp_verified:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
-                            detail="OTP is already enabled for this user")
+        return JSONResponse(
+            content={
+                "success": False, 
+                "detail": "OTP is already enabled for this user", 
+                "category": FlashCategory.WARNING.value, 
+                "user": user.username
+                },
+            status_code=status.HTTP_400_BAD_REQUEST
+        )
     
     otp_base32 = pyotp.random_base32()
     
     otp_auth_url = pyotp.totp.TOTP(otp_base32).provisioning_uri(
-        name=user.username, issuer_name="dreamyskysanctuary.com")
+        name=user.username, issuer_name="DreamySkySanctuary.com")
     
     user.otp_base32 = otp_base32
     user.otp_auth_url = otp_auth_url
@@ -132,30 +179,64 @@ def Generate_OTP(request: Request, user: UserDB = Depends(login_manager)):
     update_otp_user(connection, user)
     close_connection(connection)
 
-    return {'otp_enabled': True, "user": user.username, "otp_base32": otp_base32, "otp_auth_url": otp_auth_url}
+    return JSONResponse(
+        content={
+            "success": True, 
+            "user": user.username, 
+            "otp_base32": otp_base32, 
+            "otp_auth_url": otp_auth_url
+            },
+        status_code=status.HTTP_200_OK
+    )
 
 
 @router.post('/auth/otp/verify')
 def Verify_OTP(request: Request, payload: UserRequestSchema, user: UserDB = Depends(login_manager)):
     if not user:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
-                            detail="Token is invalid or user doesn't exist")
+        return JSONResponse(
+            content={
+                "success": False, 
+                "detail": "Token is invalid or user doesn't exist",
+                "category": FlashCategory.WARNING.value, 
+                "user": user.username
+                },
+            status_code=status.HTTP_400_BAD_REQUEST
+        )
     
     if not user.otp_enabled:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
-                            detail="OTP is not enabled for this user")
+        return JSONResponse(
+            content={
+                "success": False, 
+                "detail": "OTP is not enabled for this user", 
+                "category": FlashCategory.WARNING.value, 
+                "user": user.username
+                },
+            status_code=status.HTTP_400_BAD_REQUEST
+        )
     
     if user.otp_verified:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
-                            detail="OTP is already verified for this user")
+        return JSONResponse(
+            content={
+                "success": False, 
+                "detail": "OTP is already verified for this user", 
+                "category": FlashCategory.WARNING.value, 
+                "user": user.username
+                },
+            status_code=status.HTTP_400_BAD_REQUEST
+        )
 
     totp = pyotp.TOTP(user.otp_base32)
     print(f"{totp.now()} == {payload.token}")
     if not totp.verify(payload.token, valid_window=config.OTP_WINDOW):
-        
-        return {'otp_verified': False, "user": user.username}
-        # raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
-        #                     detail=message)
+        return JSONResponse(
+            content={
+                "success": False, 
+                "detail": "Invalid OTP token", 
+                "category": FlashCategory.WARNING.value, 
+                "user": user.username
+                },
+            status_code=status.HTTP_400_BAD_REQUEST
+        )
     
     user.otp_verified = True
     
@@ -163,38 +244,96 @@ def Verify_OTP(request: Request, payload: UserRequestSchema, user: UserDB = Depe
     update_otp_user(connection, user)
     close_connection(connection)
 
-    return {'otp_verified': True, "user": user.username}
+    return JSONResponse(
+        content={
+            "success": True, 
+            "user": user.username
+            },
+        status_code=status.HTTP_200_OK
+    )
 
 
 @router.post('/auth/otp/validate') # This is the endpoint that will be used to validate the OTP token, it will be used to authenticate the user after login
 def Validate_OTP(request: Request, payload: UserRequestSchema, user: Annotated[UserDB, Security(login_manager)]):
     if not user.otp_enabled:
-        return {'otp_valid': True, "user": user.username, "otp_enabled": False}
+        return JSONResponse(
+            content={
+                "success": False, 
+                "detail": "OTP is not enabled for this user", 
+                "category": FlashCategory.WARNING.value, 
+                "user": user.username
+                },
+            status_code=status.HTTP_400_BAD_REQUEST
+        )
 
     if not user.otp_verified:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
-                            detail="OTP must be verified first, before using it to authenticate")
+        return JSONResponse(
+            content={
+                "success": False, 
+                "detail": "OTP must be verified first, before using it to authenticate", 
+                "category": FlashCategory.WARNING.value, 
+                "user": user.username
+                },
+            status_code=status.HTTP_401_UNAUTHORIZED
+        )
 
     totp = pyotp.TOTP(user.otp_base32)
     if not totp.verify(otp=payload.token, valid_window=config.OTP_WINDOW):
-        return {'otp_valid': False, "user": user.username, "otp_enabled": True}
+        return JSONResponse(
+            content={
+                "success": False, 
+                "detail": "Invalid OTP token", 
+                "category": FlashCategory.WARNING.value, 
+                "user": user.username
+                },
+            status_code=status.HTTP_401_UNAUTHORIZED
+        )
 
-    return {'otp_valid': True, "user": user.username, "otp_enabled": True}
+    return JSONResponse(
+        content={
+            "success": True, 
+            "user": user.username,
+            "redirect": "/account"
+            },
+        status_code=status.HTTP_200_OK
+    )
 
 
 @router.post('/auth/otp/remove')
 def Disable_OTP(request: Request, payload: UserRequestSchema, user: UserDB = Depends(login_manager)):
     if not user.otp_enabled:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
-                            detail="OTP must be enables first, before it can be disabled")
+        return JSONResponse(
+            content={
+                "success": False, 
+                "detail": "OTP is not enabled for this user", 
+                "category": FlashCategory.WARNING.value, 
+                "user": user.username
+                },
+            status_code=status.HTTP_400_BAD_REQUEST
+        )
     
     if not user.otp_verified:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
-                            detail="OTP must be verified first, before it can be disabled. pls regenerate the OTP and verify it first")
+        return JSONResponse(
+            content={
+                "success": False, 
+                "detail": "OTP must be verified first, before it can be disabled. pls regenerate the OTP and verify it first", 
+                "category": FlashCategory.WARNING.value, 
+                "user": user.username
+                },
+            status_code=status.HTTP_400_BAD_REQUEST
+        )
     
     totp = pyotp.TOTP(user.otp_base32)
     if not totp.verify(otp=payload.token, valid_window=config.OTP_WINDOW):
-        return {'otp_disabled': False, 'user': user.username}
+        return JSONResponse(
+            content={
+                "success": False, 
+                "detail": "Invalid OTP token", 
+                "category": FlashCategory.WARNING.value, 
+                "user": user.username
+                },
+            status_code=status.HTTP_401_UNAUTHORIZED
+        )
     
     user.otp_enabled = False
     user.otp_verified = False
@@ -205,23 +344,46 @@ def Disable_OTP(request: Request, payload: UserRequestSchema, user: UserDB = Dep
     update_otp_user(connection, user)
     close_connection(connection)
 
-    return {'otp_disabled': True, 'user': user.username}
+    return JSONResponse(
+        content={
+            "success": True, 
+            'user': user.username
+            },
+        status_code=status.HTTP_200_OK
+    )
 
 
 @router.get("/account")
 def account(request: Request, user: Annotated[UserDB, Security(login_manager)]):
-    return "You are an authentciated user"
+    return templates.TemplateResponse("auth/account.html", {"request": request, "user": user})
 
 
 @router.get("/admin")
 def account(request: Request, user: Annotated[UserDB, Security(login_manager, scopes=[Scopes.ADMIN.value])]):
-    return "You are an authentciated user"
+    return "You are an authentciated admin"
 
 
 @router.get("/logout")
+def logout_page(request: Request):
+    print("Logging out")    
+    response = RedirectResponse(
+        url="/login",
+        status_code=status.HTTP_307_TEMPORARY_REDIRECT
+    )
+    login_manager.set_cookie(response, "")
+    return response
+
+
+@router.post("/auth/logout")
 def logout(request: Request, user: Annotated[UserDB, Security(login_manager)]):
-    response = RedirectResponse(url="/", status_code=status.HTTP_302_FOUND)
-    print(login_manager.get_current_user(response))
+    response = JSONResponse(
+        content={
+            "success": True, 
+            "user": user.username,
+            "redirect": "/login"
+            }, 
+        status_code=status.HTTP_200_OK
+    )
     login_manager.set_cookie(response, "")
     return response
 
@@ -232,11 +394,18 @@ def forgot_password(request: Request):
 
 
 @router.post("/auth/forgot-password")
-async def forgot_password(request: Request, forgotForm: Annotated[ForgotPasswordForm, Form()]):
-    flash(request, "A password reset link has been sent to your email if it's associated with an account", FlashCategory.SUCCESS.value)
+async def forgot_password(request: Request, forgotForm: Annotated[ForgotPasswordForm, Form(media_type="application/x-www-form-urlencoded")]):
     
     if not forgotForm.account:
-        return RedirectResponse(url="/forgot-password", status_code=status.HTTP_302_FOUND)
+        flash(request, "Please provide an account to reset password", FlashCategory.WARNING.value)
+        return JSONResponse(
+            content={
+                "success": False, 
+                "detail": "Please provide an account to reset password",
+                "category": FlashCategory.WARNING.value
+                },
+            status_code=status.HTTP_302_FOUND
+        )
     
     connection = create_connection("Website")
     if forgotForm.account.find("@") != -1:
@@ -246,7 +415,15 @@ async def forgot_password(request: Request, forgotForm: Annotated[ForgotPassword
 
     if not user:
         close_connection(connection)
-        return RedirectResponse(url="/forgot-password", status_code=status.HTTP_302_FOUND)
+        return JSONResponse(
+            content={
+                "success": True, 
+                "detail": "A password reset link has been sent to your email if it's associated with an account",
+                "category": FlashCategory.SUCCESS.value, 
+                "user": forgotForm.account
+                },
+            status_code=status.HTTP_200_OK
+        )
     
     reset_token = pyotp.random_base32(length=64)
     
@@ -256,8 +433,15 @@ async def forgot_password(request: Request, forgotForm: Annotated[ForgotPassword
     
     # TODO: send email with reset token
     await send_reset_password_token_to_owner(user, reset_token)
-    
-    return RedirectResponse(url="/forgot-password", status_code=status.HTTP_302_FOUND)
+    return JSONResponse(
+            content={
+                "success": True, 
+                "detail": "A password reset link has been sent to your email if it's associated with an account",
+                "category": FlashCategory.SUCCESS.value, 
+                "user": user.username
+                },
+            status_code=status.HTTP_200_OK
+        )
 
 
 @router.get("/reset-password/{token}")
@@ -273,14 +457,21 @@ def reset_password(request: Request, token: str):
 
 
 @router.post("/auth/reset-password/{token}")
-async def reset_password(request: Request, token: str, resetPasswordFrom: Annotated[ResetPasswordForm, Form()]):
+async def reset_password(request: Request, token: str, resetPasswordFrom: Annotated[ResetPasswordForm, Form(media_type="application/x-www-form-urlencoded")]):
     
     connection = create_connection("Website")
     user = get_forgot_password_account_from_token(connection, token)
     
     if not user:
         close_connection(connection)
-        return RedirectResponse(url="/forgot-password", status_code=status.HTTP_302_FOUND)
+        return JSONResponse(
+            content={
+                "success": False, 
+                "detail": "Invalid reset token",
+                "category": FlashCategory.WARNING.value
+                },
+            status_code=status.HTTP_302_FOUND
+        )
     
     user.password_hash = generate_password_hash(resetPasswordFrom.password)
     
@@ -292,4 +483,13 @@ async def reset_password(request: Request, token: str, resetPasswordFrom: Annota
     
     flash(request, "Password has been reset successfully", FlashCategory.SUCCESS.value)
     
-    return RedirectResponse(url="/login", status_code=status.HTTP_302_FOUND)
+    return JSONResponse(
+        content={
+            "success": True, 
+            "detail": "Password has been reset successfully",
+            "category": FlashCategory.SUCCESS.value, 
+            "user": user.username,
+            "redirect": "/login"
+            },
+        status_code=status.HTTP_200_OK
+    )

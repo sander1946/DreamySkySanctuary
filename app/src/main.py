@@ -92,6 +92,8 @@ async def value_error_handler(request, exc: ValueError):
 async def validation_exception_handler(request: Request, exc: RequestValidationError):
     flash(request, "Invalid information was given, pls check your input", "warning")
     
+    print(f"Validation Error: {exc}")
+    
     return RedirectResponse(request.headers.get('referer') if request.headers.get('referer').startswith(str(request.base_url)) else "/register", status_code=status.HTTP_303_SEE_OTHER) # redirect to the previous page if a validation error is raised. or to the register page becuase that is the most common page where validation errors are raised
     return templates.TemplateResponse(
         name="error/custom.html",

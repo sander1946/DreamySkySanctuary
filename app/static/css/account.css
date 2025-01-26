@@ -1,7 +1,7 @@
 @import url(/static/css/main.css);
 
-.error {
-    grid-area: Error;
+.account {
+    grid-area: Account;
 }
 
 .main-grid {
@@ -11,7 +11,7 @@
     width: 98vw;
     grid-template-areas: 
         'Flash'
-        'Error';
+        'Account';
 }
 
 @media (min-width: 1000px) and (max-width: 1200px) {
@@ -19,7 +19,7 @@
         grid-template-columns: auto;
         grid-template-areas: 
             'Flash'
-            'Error';
+            'Account';
     }
 }
 
@@ -28,7 +28,7 @@
         grid-template-columns: auto;
         grid-template-areas: 
             'Flash'
-            'Error';
+            'Account';
     }
 }
 
@@ -37,6 +37,6 @@
         grid-template-columns: auto;
         grid-template-areas: 
             'Flash'
-            'Error';
+            'Account';
     }
 }

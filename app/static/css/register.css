@@ -71,7 +71,7 @@
 
 .main-grid {
     display: grid;
-    gap: 0px;
+    gap: 5px;
     padding: 10px;
     width: 98vw;
     grid-template-areas: 
