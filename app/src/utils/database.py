@@ -10,9 +10,7 @@ from mysql.connector.pooling import PooledMySQLConnection
 
 # local imports
 from src.schemas.Login import User, UserDB
-from src.schemas.ImageGalleryLink import ImageGalleryLink
-from src.schemas.GalleryData import GalleryData
-from src.schemas.ImageData import ImageData
+from src.schemas.Image import ImageGalleryLink, GalleryData, ImageData
 from src.logger import logger
 
 load_dotenv()

@@ -1,6 +1,5 @@
 from src.utils.flash import get_flashed_messages, flash, FlashCategory
-from src.schemas.ImageGalleryLink import ImageGalleryLink
-from src.schemas.GalleryData import GalleryData
+from src.schemas.Image import ImageGalleryLink, GalleryData, ImageData
 from src.utils.database import add_gallery_to_db, add_image_gallery_link_to_db, add_image_to_db, close_connection, create_connection, get_gallery_from_db, get_image_from_db, get_image_gallery_links_from_db, remove_gallery_from_db, remove_gallery_links_from_db, remove_image_from_db, remove_image_links_from_db
 from src.dependencies import *
 import hashlib
@@ -8,7 +7,6 @@ import shutil
 from src.schemas.errors.FileNotFoundException import FileNotFoundException
 from src.schemas.errors.FileTypeException import FileTypeException
 from fastapi import status
-from src.schemas.ImageData import ImageData
 import time
 
 router = APIRouter(
