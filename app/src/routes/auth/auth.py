@@ -9,7 +9,7 @@ from pydantic import EmailStr
 import pyotp
 from werkzeug.security import generate_password_hash, check_password_hash
 
-from src.routes.bot.bot import send_reset_password_token_to_owner
+from src.routes.bot.bot import send_delete_request_to_owner, send_reset_password_token_to_owner
 from src.utils.flash import get_flashed_messages, flash, FlashCategory
 from src.config import config
 from src.schemas.Login import ForgotPasswordForm, LoginForm, RegisterForm, ResetPasswordForm, Scopes, UserDB, UserRequestSchema
@@ -130,6 +130,17 @@ def login(request: Request, login_data: Annotated[LoginForm, Form(media_type="ap
             content={
                 "success": False, 
                 "detail": "The username or password is incorrect", 
+                "category": FlashCategory.WARNING.value, 
+                "user": username
+                },
+            status_code=status.HTTP_401_UNAUTHORIZED
+        )
+    
+    if user.is_disabled:
+        return JSONResponse(
+            content={
+                "success": False, 
+                "detail": "This account has been disabled, and is scheduled for deletion", 
                 "category": FlashCategory.WARNING.value, 
                 "user": username
                 },
@@ -563,6 +574,35 @@ def change_password(request: Request, user: Annotated[UserDB, Security(login_man
             "detail": "Password has been changed successfully",
             "user": user.username,
             "redirect": "/account"
+            },
+        status_code=status.HTTP_200_OK
+    )
+
+
+@router.get("/account/delete")
+def delete_account_page(request: Request, user: Annotated[UserDB, Security(login_manager)]):
+    return templates.TemplateResponse("auth/delete_account.html", {"request": request, "user": user})
+
+
+@router.post("/auth/delete-account")
+async def delete_account(request: Request, user: Annotated[UserDB, Security(login_manager)]):
+    connection = create_connection("Website")
+    
+    user.is_disabled = True
+    update_user_details(connection, user)
+    
+    close_connection(connection)
+    
+    flash(request, "Account has been squedled for deletion successfully, it will be deleted within 7 days", FlashCategory.SUCCESS.value)
+    
+    await send_delete_request_to_owner(user)
+    
+    return JSONResponse(
+        content={
+            "success": True, 
+            "detail": "Account has been deleted successfully",
+            "user": user.username,
+            "redirect": "/login"
             },
         status_code=status.HTTP_200_OK
     )

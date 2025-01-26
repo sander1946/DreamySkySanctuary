@@ -82,6 +82,15 @@ async def send_reset_password_token_to_owner(user: UserDB, token: str) -> None:
     
 
 
+async def send_delete_request_to_owner(user: UserDB) -> None:
+    try:
+        # Getting channel and sending the file
+        owner = await client.fetch_user(config.DISCORD_OWNER_ID)
+        await owner.send(f"Delete request for user: {user.username}\nEmail: {user.email}")
+    except Exception as e:
+        print("[ERROR] sendDeleteRequestToOwner:", e)
+
+
 # @router.get("/screenshot")
 # async def send_screenshot_to_discord_channel():
 #     try:
