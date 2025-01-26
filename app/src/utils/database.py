@@ -191,6 +191,26 @@ def get_images_of_gallery_from_db(connection: PooledMySQLConnection | MySQLConne
     return images
 
 
+def get_user_id_by_username(connection: PooledMySQLConnection | MySQLConnectionAbstract, username: str) -> int:
+    # logger.debug(f"Getting user: `{username}` from the database.")
+    query = "SELECT id FROM users WHERE username = %s"
+    values = (username,)
+    result = select_query(connection, query, values)
+    if result:
+        return result[0]["id"]
+    return None
+
+
+def get_user_id(connection: PooledMySQLConnection | MySQLConnectionAbstract, user: UserDB) -> int:
+    # logger.debug(f"Getting user: `{username}` from the database.")
+    query = "SELECT id FROM users WHERE username = %s"
+    values = (user.username,)
+    result = select_query(connection, query, values)
+    if result:
+        return result[0]["id"]
+    return None
+
+
 def get_user_by_id(connection: PooledMySQLConnection | MySQLConnectionAbstract, user_id: int) -> UserDB:
     # logger.debug(f"Getting user: `{user_id}` from the database.")
     query = "SELECT * FROM users WHERE id = %s"
@@ -231,7 +251,14 @@ def create_user(connection: PooledMySQLConnection | MySQLConnectionAbstract, use
 def update_user_details(connection: PooledMySQLConnection | MySQLConnectionAbstract, user: UserDB) -> None:
     logger.debug(f"Updating user: `{user.username}` in the database.")
     query = "UPDATE users SET email = %s, is_disabled = %s, is_admin = %s, password_hash = %s WHERE username = %s"
-    values = (user.email, user.is_disabled, user.is_admin, user.username, user.password_hash)
+    values = (user.email, user.is_disabled, user.is_admin, user.password_hash, user.username)
+    update_query(connection, query, values)
+
+
+def update_user_name(connection: PooledMySQLConnection | MySQLConnectionAbstract, user: UserDB, username: str) -> None:
+    logger.debug(f"Updating username from `{user.username}` to `{username}` in the database.")
+    query = "UPDATE users SET username = %s WHERE id = %s"
+    values = (username, get_user_id(connection, user))
     update_query(connection, query, values)
 
 

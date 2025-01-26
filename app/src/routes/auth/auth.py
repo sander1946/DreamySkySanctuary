@@ -5,6 +5,7 @@ from fastapi.responses import JSONResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 from fastapi_login import LoginManager
 
+from pydantic import EmailStr
 import pyotp
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -12,9 +13,7 @@ from src.routes.bot.bot import send_reset_password_token_to_owner
 from src.utils.flash import get_flashed_messages, flash, FlashCategory
 from src.config import config
 from src.schemas.Login import ForgotPasswordForm, LoginForm, RegisterForm, ResetPasswordForm, Scopes, UserDB, UserRequestSchema
-from src.utils.database import close_connection, create_connection, create_user, get_forgot_password_account_from_token, get_user_by_email, get_user_by_username, remove_forgot_password_token, save_forgot_password_token, update_otp_user, update_user_details
-
-import qrcode
+from src.utils.database import close_connection, create_connection, create_user, get_forgot_password_account_from_token, get_user_by_email, get_user_by_username, remove_forgot_password_token, save_forgot_password_token, update_otp_user, update_user_details, update_user_name
 
 login_manager = LoginManager(config.SERVER_SECRET, token_url="/auth/login", use_cookie=True)
 login_manager.cookie_name = "user_token"
@@ -445,7 +444,7 @@ async def forgot_password(request: Request, forgotForm: Annotated[ForgotPassword
 
 
 @router.get("/reset-password/{token}")
-def reset_password(request: Request, token: str):
+def reset_password_page(request: Request, token: str):
     connection = create_connection("Website")
     user = get_forgot_password_account_from_token(connection, token)
     close_connection(connection)
@@ -457,7 +456,7 @@ def reset_password(request: Request, token: str):
 
 
 @router.post("/auth/reset-password/{token}")
-async def reset_password(request: Request, token: str, resetPasswordFrom: Annotated[ResetPasswordForm, Form(media_type="application/x-www-form-urlencoded")]):
+def reset_password(request: Request, token: str, resetPasswordFrom: Annotated[ResetPasswordForm, Form(media_type="application/x-www-form-urlencoded")]):
     
     connection = create_connection("Website")
     user = get_forgot_password_account_from_token(connection, token)
@@ -490,6 +489,80 @@ async def reset_password(request: Request, token: str, resetPasswordFrom: Annota
             "category": FlashCategory.SUCCESS.value, 
             "user": user.username,
             "redirect": "/login"
+            },
+        status_code=status.HTTP_200_OK
+    )
+
+
+@router.post("/auth/change-username")
+def change_username(request: Request, user: Annotated[UserDB, Security(login_manager)], username: Annotated[str, Form(media_type="application/x-www-form-urlencoded")]):
+    connection = create_connection("Website")
+    current_user = get_user_by_username(connection, username)
+    
+    if current_user:
+        print(f"User already exists: {user.username}")
+        return JSONResponse(
+            content={
+                "success": False, 
+                "detail": "A user by that username already exists. Chose a diffrent username or try to login", 
+                "category": FlashCategory.INFO.value, 
+                "user": user.username
+                },
+            status_code=status.HTTP_202_ACCEPTED
+        )
+    
+    update_user_name(connection, user, username)
+    
+    response = JSONResponse(
+        content={
+            "success": True, 
+            "detail": "Username has been changed successfully",
+            "user": user.username,
+            "redirect": "/account"
+            },
+        status_code=status.HTTP_200_OK
+        )
+    login_manager.set_cookie(response, get_user_access_cookie(user))
+    return response
+
+@router.post("/auth/change-email")
+def change_email(request: Request, user: Annotated[UserDB, Security(login_manager)], email: Annotated[EmailStr, Form(media_type="application/x-www-form-urlencoded")]):
+    connection = create_connection("Website")
+    
+    user.email = email
+    
+    update_user_details(connection, user)  
+    
+    close_connection(connection)
+    
+    return JSONResponse(
+        content={
+            "success": True, 
+            "detail": "Email has been changed successfully",
+            "user": user.username,
+            "redirect": "/account"
+            },
+        status_code=status.HTTP_200_OK
+    )
+
+@router.post("/auth/change-password")
+def change_password(request: Request, user: Annotated[UserDB, Security(login_manager)], resetPasswordFrom: Annotated[ResetPasswordForm, Form(media_type="application/x-www-form-urlencoded")]):
+    connection = create_connection("Website")
+    
+    user.password_hash = generate_password_hash(resetPasswordFrom.password)
+    
+    update_user_details(connection, user)  
+    
+    close_connection(connection)
+    
+    print(f"Password changed for: {user.username}")
+    
+    return JSONResponse(
+        content={
+            "success": True, 
+            "detail": "Password has been changed successfully",
+            "user": user.username,
+            "redirect": "/account"
             },
         status_code=status.HTTP_200_OK
     )
