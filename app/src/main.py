@@ -3,7 +3,6 @@ import typing
 from fastapi import Form
 from fastapi.responses import HTMLResponse
 from src.utils.flash import flash, get_flashed_messages, FlashCategory
-from src.schemas.errors.NotAuthenticatedException import NotAuthenticatedException
 from src.utils.refresh_team_file import refresh_team_file
 from src.dependencies import *
 from fastapi.exceptions import RequestValidationError, HTTPException

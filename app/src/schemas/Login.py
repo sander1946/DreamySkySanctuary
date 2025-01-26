@@ -9,7 +9,6 @@ class Scopes(str, Enum):
     BASIC = "basic"
     ADMIN = "admin"
     OTP_CHECKED = "otp_checked"
-    
 
 
 class LoginForm(BaseModel):
