@@ -154,12 +154,17 @@
     padding: 0px;
 }
 
+.flash {
+    grid-area: Flash;
+}
+
 .main-grid {
 display: grid;
 gap: 15px;
 padding: 10px;
 width: 98vw;
 grid-template-areas: 
+    'Flash'
     'Upload'
     'Viewer';
 }

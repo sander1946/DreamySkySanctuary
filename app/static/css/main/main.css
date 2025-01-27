@@ -102,6 +102,10 @@
   grid-area: Us;
 }
 
+.flash {
+  grid-area: Flash;
+}
+
 .main-grid {
   display: grid;
   gap: 15px;

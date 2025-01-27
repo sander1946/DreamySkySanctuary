@@ -37,3 +37,30 @@ function validate_input(inputfield) {
         return false;
     }
 }
+
+const form = document.getElementById('form');
+form.addEventListener('submit', function(event) {
+    event.preventDefault();
+    
+    const data = new URLSearchParams(new FormData(form));
+
+    const token = document.getElementById('token').value;
+
+    fetch('/auth/reset-password/'+token, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: data
+    }).then(res => res.json()).then(data => {
+        if (data.success) {
+            if (data.redirect) {
+                window.location.href = data.redirect;
+            }
+        } else {
+            showFlashMessage(data.detail, data.category);
+        }
+    }).catch(error => {
+        console.error('Error:', error);
+    });
+});

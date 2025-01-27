@@ -16,6 +16,11 @@ Login
 </div>
 
 <main class="main-grid place-items-center">
+    {# Flashing message start here #}
+    {% for message in get_flashed_messages(request) %}
+        <div class="flash-{{ message.category }} bg-glass text-center">{{ message.message }}</div>
+    {% endfor %}
+    {# Flashing message end here #}
     <div class="login bg-glass">
         <form id="form" onsubmit="return validate_input(this)" class="login-form row row-cols-1 align-items-center justify-content-center">
             <h1 class="col-12 display-3 text-center">Register</h1>

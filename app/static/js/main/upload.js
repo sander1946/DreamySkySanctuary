@@ -1,7 +1,7 @@
 // Function to add event listener to table
 var el = document.getElementById("imgsize");
 el.addEventListener("change", function () {
-    if (this.selectedIndex === 1) {
+    if (this.selectedIndex === 6) {
         document.querySelector('.custom-size-input').style.display = 'block';
     } else {
         document.querySelector('.custom-size-input').style.display = 'none';

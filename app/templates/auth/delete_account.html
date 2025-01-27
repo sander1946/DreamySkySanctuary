@@ -34,9 +34,6 @@ Account
             <div class="account-header-content-item">
                 <p class="lead">Created at: {{ user.created_at }}</p>
             </div>
-            <div class="account-header-content-item">
-                <button class="btn btn-primary" onclick="window.location.href='/logout'">Logout</button>
-            </div>
         </div>
     </div>
     <div class="account-body bg-glass">
@@ -44,6 +41,7 @@ Account
             <div class="account-body-content-item">
                 <h2 class="display-6">Are you sure you want to delete your account?</h2>
                 <button class="btn btn-success" onclick="window.location.href='/account'">No, take me back</button>
+                <button class="btn btn-primary" onclick="window.location.href='/logout'">No, log me out instead</button>
                 <button class="btn btn-danger" onclick="delete_confirm();">Yes, I'm sure</button>
             </div>
         </div>

@@ -16,6 +16,11 @@
 </div>
 
 <main class="main-grid">
+    {# Flashing message start here #}
+    {% for message in get_flashed_messages(request) %}
+        <div class="flash-{{ message.category }} bg-glass text-center">{{ message.message }}</div>
+    {% endfor %}
+    {# Flashing message end here #}
     <div class="error bg-glass">
         <h1 class="display-6 text-center">An Error Has Occured</h1>
         <h1 class="display-1 text-center">{{ http_status._value_ }}: {{ http_status.phrase }}</h1>

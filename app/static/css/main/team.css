@@ -55,6 +55,10 @@
     grid-area: lumi-right;
 }
 
+.flash {
+    grid-area: Flash;
+}
+
 .main-grid {
     grid-template-areas:
     'Flash     Flash' 

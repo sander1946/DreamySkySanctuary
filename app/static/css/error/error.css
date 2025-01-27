@@ -4,6 +4,10 @@
     grid-area: Error;
 }
 
+.flash {
+    grid-area: Flash;
+}
+
 .main-grid {
     display: grid;
     gap: 5px;
