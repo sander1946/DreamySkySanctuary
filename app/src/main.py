@@ -85,20 +85,14 @@ async def http_exception_handler(request, exc: StarletteHTTPException):
 @app.exception_handler(ValueError)
 async def value_error_handler(request, exc: ValueError):
     print(f"ValueError: {exc}")
-    return RedirectResponse(url="/", status_code=status.HTTP_308_PERMANENT_REDIRECT) # redirect to home page if an value error is raised
+    flash(request, "The given input was not valid, pls check your input", FlashCategory.DANGER)
+    return RedirectResponse(request.headers.get('referer') if request.headers.get('referer').startswith(str(request.base_url)) else "/register", status_code=status.HTTP_303_SEE_OTHER) # redirect to the previous page if a validation error is raised. or to the register page becuase that is the most common page where validation errors are raised
 
 @app.exception_handler(RequestValidationError)
 async def validation_exception_handler(request: Request, exc: RequestValidationError):
-    flash(request, "Invalid information was given, pls check your input", "warning")
-    
     print(f"Validation Error: {exc}")
-    
+    flash(request, "The given input was not valid, pls check your input", FlashCategory.DANGER)
     return RedirectResponse(request.headers.get('referer') if request.headers.get('referer').startswith(str(request.base_url)) else "/register", status_code=status.HTTP_303_SEE_OTHER) # redirect to the previous page if a validation error is raised. or to the register page becuase that is the most common page where validation errors are raised
-    return templates.TemplateResponse(
-        name="error/custom.html",
-        context={"request": request, "code": status.HTTP_400_BAD_REQUEST, "phrase": "Validation Error", "description": "Please check the form for errors"},
-        status_code=status.HTTP_400_BAD_REQUEST,
-    )
 
 @app.exception_handler(FileTypeException)
 async def unicorn_exception_handler(request: Request, exc: FileTypeException):
@@ -110,22 +104,12 @@ async def unicorn_exception_handler(request: Request, exc: FileTypeException):
             "file_type": exc.file_type,
             "allowed_types": exc.allowed_types,
         },
-        headers=exc.headers,
     )
 
 @app.exception_handler(FileNotFoundException)
 async def unicorn_exception_handler(request: Request, exc: FileNotFoundException):
-    # return JSONResponse(
-    #     status_code=status.HTTP_400_BAD_REQUEST,
-    #     content={
-    #         "message": exc.message,
-    #         "file_name": exc.file_name,
-    #         "file_path": exc.file_path,
-    #     },
-    # )
     return RedirectResponse(url="/upload", 
-                            status_code=status.HTTP_307_TEMPORARY_REDIRECT,
-                            headers=exc.headers,) # redirect to home page if 3xx is raised
+                            status_code=status.HTTP_303_SEE_OTHER,) # redirect to home page if 3xx is raised
 
 @app.on_event("startup")
 @repeat_every(seconds=60*60)  # check every hour for expired files
