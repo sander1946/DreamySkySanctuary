@@ -18,3 +18,4 @@ werkzeug
 python-jose[cryptography]
 pyotp
 yagmail
+pillow

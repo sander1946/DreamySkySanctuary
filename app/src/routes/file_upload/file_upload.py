@@ -1,3 +1,4 @@
+from src.utils.image_utils import resize_and_crop_image
 from src.utils.flash import get_flashed_messages, flash, FlashCategory
 from src.schemas.Image import ImageGalleryLink, GalleryData, ImageData
 from src.utils.database import add_gallery_to_db, add_image_gallery_link_to_db, add_image_to_db, close_connection, create_connection, get_gallery_from_db, get_image_from_db, get_image_gallery_links_from_db, remove_gallery_from_db, remove_gallery_links_from_db, remove_image_from_db, remove_image_links_from_db
@@ -6,7 +7,7 @@ import hashlib
 import shutil
 from src.schemas.errors.FileNotFoundException import FileNotFoundException
 from src.schemas.errors.FileTypeException import FileTypeException
-from fastapi import status
+from fastapi import Form, status
 import time
 
 router = APIRouter(
@@ -26,7 +27,25 @@ async def main(request: Request, response: Response):
 
 
 @router.post("/upload", include_in_schema=True)
-async def upload_file(request: Request, uploaded_images: List[UploadFile] = File(...)):
+async def upload_file(request: Request, uploaded_images: List[UploadFile] = File(...), expire: int = Form(0), imgsize: int = Form("original"), width: int = Form(-1), height: int = Form(-1)):
+    print(f"Expire: {expire}, Size: {imgsize}, Width: {width}, Height: {height}")
+    sizes = {
+        0: [-1, -1],
+        1: [934, 282],
+        2: [512, 512],
+        3: [960, 540],
+        4: [1920, 1080],
+        5: [3840, 2160],
+        6: [-1, -1]
+    }
+    if imgsize not in sizes:
+        raise ValueError(f"Invalid image size: {imgsize}")
+    if imgsize != 6:
+        width = sizes[imgsize][0]
+        height = sizes[imgsize][1]
+    if width <= -1 or height <= -1:
+        raise ValueError(f"Invalid width or height: {width} x {height}, must be greater than 0.")
+    
     saved_files: list[ImageData] = []
     for image in uploaded_images:
         if image.content_type not in config.ALLOWED_FILE_TYPES:
@@ -42,6 +61,9 @@ async def upload_file(request: Request, uploaded_images: List[UploadFile] = File
         
         with open(save_path, "wb+") as f:
             shutil.copyfileobj(image.file, f)
+        
+        if width > 0 and height > 0:
+            resize_and_crop_image(save_path, height, width)
         
         image_data = ImageData(
             filename=filename,

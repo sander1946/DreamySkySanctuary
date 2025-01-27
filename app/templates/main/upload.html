@@ -26,7 +26,7 @@ Upload Images
                     <div class="upload-input-group col-12 justify-content-center">
                         <div class="upload-input-group col-sm-12 align-center">
                             <select name="expire" id="expire" class="width100">
-                                <option value="0">No expiration date</option>
+                                <option value="0" selected="">No expiration date</option>
                                 <option value="1">Remove after 1 day</option>
                                 <option value="7">Remove after 7 days</option>
                                 <option value="31">Remove after 31 days</option>
@@ -37,19 +37,19 @@ Upload Images
                         <div class="upload-input-group col-sm-12 align-center">
                             <select name="imgsize" id="imgsize" class="width100">
                                 <option value="0" selected="">Keep the original dimentions</option>
-                                <option value="custom">Custom dimentions</option>
                                 <option value="1">934 x 282 Pixels (Carl level background)</option>
                                 <option value="2">512 x 512 Pixels (Discord Profile Picture)</option>
                                 <option value="3">960 x 540 Pixels (Discord Banner)</option>
                                 <option value="4">1920 x 1080 Pixels (HD)</option>
                                 <option value="5">3840 x 2160 Pixels (4K)</option>
+                                <option value="6">Custom dimentions</option>
                             </select>
                         </div>
                     </div>
                     <div class="upload-input-group col-12 justify-content-center">
                         <div class="upload-input-group custom-size-input col-sm-12 align-center">
-                            <input type="number" min="1" name="width" id="width" class="width25" placeholder="Width">
-                            <input type="number" min="1" name="height" id="height" class="width25" placeholder="Height">
+                            <input type="number" min="1" name="width" id="width" class="width25" placeholder="Width" value="0">
+                            <input type="number" min="1" name="height" id="height" class="width25" placeholder="Height" value="0">
                         </div>
                     </div>
                     <div class="upload-input-btn col-12 justify-content-center">
