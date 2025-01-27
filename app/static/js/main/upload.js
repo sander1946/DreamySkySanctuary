@@ -9,9 +9,15 @@ el.addEventListener("change", function () {
 }, false);
 
 var loadFile = function(event) {
+    console.log(event)
+    console.log(event.target.files)
     var output = document.getElementById('upload-preview-container');
     output.innerHTML = '';
     for (var i = 0; i < event.target.files.length; i++) {
+        if (event.target.files[i].size > 80000000) {
+            showFlashMessage(event.target.files[i].name + '- File size must be less than 8MB', 'error');
+            return;
+        }
         var preview = document.createElement("div");
         preview.style = "background-image:url(\'" + URL.createObjectURL(event.target.files[i]) + "\');";
         preview.classList.add('upload-preview');

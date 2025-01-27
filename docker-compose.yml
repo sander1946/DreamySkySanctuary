@@ -8,3 +8,10 @@ services:
       - ./dreamy-data:/dreamy-data
     ports:
       - "80:80"
+  rm_worker:
+    build:
+      context: .
+      dockerfile: rm_worker.dockerfile
+    volumes:
+      - ./app/:/app
+      - ./dreamy-data:/dreamy-data

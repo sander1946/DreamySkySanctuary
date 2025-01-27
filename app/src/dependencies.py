@@ -20,7 +20,6 @@ from src.config import config
 # route imports
 from src.routes.main import main as main_route
 from src.routes.auth import auth as auth_route
-from src.routes.bot import bot as bot_route
 from src.routes.file_upload import file_upload as file_upload_route
 
 # schema imports

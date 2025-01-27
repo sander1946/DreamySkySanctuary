@@ -44,7 +44,6 @@ app.mount("/public", StaticFiles(directory=config.PUBLIC_DIR), name="public")
 app.mount('/images', StaticFiles(directory=config.UPLOAD_DIR), name='images')
 
 app.include_router(main_route.router)
-app.include_router(bot_route.router)
 app.include_router(auth_route.router)
 app.include_router(file_upload_route.router)
 

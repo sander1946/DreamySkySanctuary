@@ -6,7 +6,9 @@ from src.routes.bot.bot import fetch_by_id
 
 
 async def refresh_team_file(file_path, expire_time) -> None:
-    print("Checking team file.")
+    if not os.path.exists(file_path):
+        await get_team_data()
+        print(f"Team file: {file_path} created.")
     if os.path.getmtime(file_path) < time.time() - expire_time: 
         os.remove(file_path)
         await get_team_data()

@@ -10,8 +10,7 @@ import pyotp
 from werkzeug.security import generate_password_hash, check_password_hash
 import asyncio
 
-from src.utils.email_handler import send_password_reset_mail
-from src.routes.bot.bot import send_delete_request_to_owner, send_reset_password_token_to_owner
+from src.utils.email_handler import send_email, send_password_reset_mail
 from src.utils.flash import get_flashed_messages, flash, FlashCategory
 from src.config import config
 from src.schemas.Login import ForgotPasswordForm, LoginForm, RegisterForm, ResetPasswordForm, Scopes, UserDB, UserRequestSchema
@@ -451,7 +450,6 @@ async def forgot_password(request: Request, forgotForm: Annotated[ForgotPassword
     loop = asyncio.get_event_loop()
     loop.create_task(send_password_reset_mail(request, user, reset_token))
     
-    loop.create_task(send_reset_password_token_to_owner(user, reset_token))
     return JSONResponse(
             content={
                 "success": True, 
@@ -604,7 +602,8 @@ async def delete_account(request: Request, user: Annotated[UserDB, Security(logi
     
     flash(request, "Account has been squedled for deletion successfully, it will be deleted within 7 days", FlashCategory.SUCCESS.value)
     
-    await send_delete_request_to_owner(user)
+    loop = asyncio.get_event_loop()
+    loop.create_task(send_email("sanderkleine2@gmail.com", "Account Deletion Request", f"User: {user.username} has requested to delete their account"))
     
     return JSONResponse(
         content={

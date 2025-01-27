@@ -20,6 +20,8 @@ UPLOAD_DIR: str = os.path.join(BASE_DIR, "upload")
 UPLOAD_EXPIRE_TIME: int = 60 * 60 * 24 * 31  # 31 days / 1 month
 TEAM_EXPIRE_TIME: int = 60 * 60 * 2 # 24 hours / 1 day
 ACCESS_TOKEN_EXPIRE_MINUTES: timedelta = timedelta(hours=6)
+CHECK_INTERVAL: int = 60 * 60 * 24  # 24 hours
+
 
 ENV_FILE: str = os.path.join(BASE_DIR, ".env")
 TOKEN: str = dotenv.get_key(ENV_FILE, "DISCORD_TOKEN")

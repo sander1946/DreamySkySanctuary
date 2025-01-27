@@ -9,6 +9,8 @@ from src.schemas.errors.FileNotFoundException import FileNotFoundException
 from src.schemas.errors.FileTypeException import FileTypeException
 from fastapi import Form, status
 import time
+import datetime
+
 
 router = APIRouter(
     prefix="",
@@ -30,7 +32,6 @@ async def main(request: Request, response: Response):
 @router.post("/upload", include_in_schema=True)
 async def upload_file(request: Request, uploaded_images: List[UploadFile] = File(...), expire: int = Form(0), imgsize: int = Form("original"), width: int = Form(-1), height: int = Form(-1)):
     user = request.state.user
-    print(user)
     sizes = {
         0: [-1, -1],
         1: [934, 282],
@@ -58,7 +59,6 @@ async def upload_file(request: Request, uploaded_images: List[UploadFile] = File
         
         auth_hash = hashlib.md5(f"{time.time_ns()}-{image.size}-{image.filename}".encode("utf-8"))
         hash = hashlib.sha512(f"{image.filename}-{image.size}-{time.time_ns()}".encode("utf-8"))
-        print(f"{auth_hash.hexdigest()}\n{hash.hexdigest()}")
         
         filename = f"{hash.hexdigest()}.{config.ALLOWED_FILE_TYPES[image.content_type]}"
         filename = filename[-15:]
@@ -77,7 +77,10 @@ async def upload_file(request: Request, uploaded_images: List[UploadFile] = File
             auth_code=auth_hash.hexdigest()[-15:],
             filesize=os.path.getsize(save_path),
             uploaded_by=user.username if user else None,
+            delete_after=datetime.datetime.now() + datetime.timedelta(days=expire) if expire > 0 else None,
         )
+        
+        print(image_data)
         
         saved_files.append(image_data)
     if len(saved_files) == 1:
@@ -101,6 +104,7 @@ async def upload_file(request: Request, uploaded_images: List[UploadFile] = File
             gallery_code=gallery_hash.hexdigest()[-15:],
             auth_code=gallery_hash.hexdigest()[-15:],
             uploaded_by=user.username if user else None,
+            delete_after=datetime.datetime.now() + datetime.timedelta(days=expire) if expire > 0 else None,
         )
         
         connection = create_connection("Website")
