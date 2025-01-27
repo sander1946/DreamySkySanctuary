@@ -17,6 +17,7 @@ templates.env.globals["get_flashed_messages"] = get_flashed_messages
 
 @router.get("/", include_in_schema=True)
 async def main(request: Request, response: Response):
+    user = request.state.user
     response.status_code = status.HTTP_200_OK
     announcements = [
         Announcement(title="Welcome to the API",
@@ -29,7 +30,7 @@ async def main(request: Request, response: Response):
         image = "/public/imgs/flags/en.png"),
     ]    
     
-    return templates.TemplateResponse(name="main/main.html", context={"request": request, "announcements": announcements})
+    return templates.TemplateResponse(name="main/main.html", context={"request": request, "user": user, "announcements": announcements})
 
 
 @router.get("/enchanted", include_in_schema=True)
@@ -52,7 +53,8 @@ async def enchamemorynted(request: Request, response: Response):
 
 @router.get("/team", include_in_schema=True)
 async def team(request: Request, response: Response):
+    user = request.state.user
     if not os.path.exists("team.json"):
         await get_team_data()
     team_data = json.loads(open("team.json", "r").read())
-    return templates.TemplateResponse(name="main/team.html", context={"request": request, "team_data": team_data})
+    return templates.TemplateResponse(name="main/team.html", context={"request": request, "user": user, "team_data": team_data})

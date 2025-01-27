@@ -14,6 +14,7 @@ from starlette.middleware.sessions import SessionMiddleware
 from fastapi_login.exceptions import InvalidCredentialsException, InsufficientScopeException
 import http
 from jinja2 import Environment
+from src.routes.auth.auth import login_manager
 
 # app config
 app = FastAPI(
@@ -35,6 +36,8 @@ app.add_middleware(
     secret_key=config.SERVER_SECRET,
 )
 
+login_manager.attach_middleware(app)
+
 # mount static files
 app.mount("/static", StaticFiles(directory=config.STATIC_DIR), name="static")
 app.mount("/public", StaticFiles(directory=config.PUBLIC_DIR), name="public")
@@ -52,6 +55,9 @@ templates.env.globals["get_flashed_messages"] = get_flashed_messages
 async def http_exception_handler(request, exc: StarletteHTTPException):
     http_status = http.HTTPStatus(exc.status_code)
     context = {"request": request, "exc": exc, "http_status": http_status}
+    
+    if exc.status_code == 401:
+        return RedirectResponse("/login", status_code=status.HTTP_303_SEE_OTHER)
     
     if http_status.is_client_error:
         return templates.TemplateResponse(
@@ -71,8 +77,7 @@ async def http_exception_handler(request, exc: StarletteHTTPException):
 
 # @app.exception_handler(InvalidCredentialsException)
 # def invalid_credentials_handler(request, exc: HTTPException):
-#     pass
-#     # return RedirectResponse(request.headers.get('referer') if request.headers.get('referer').startswith(str(request.base_url)) else "/upload", status_code=status.HTTP_303_SEE_OTHER)
+#     return RedirectResponse("/login", status_code=status.HTTP_303_SEE_OTHER)
 
 
 # @app.exception_handler(InsufficientScopeException)

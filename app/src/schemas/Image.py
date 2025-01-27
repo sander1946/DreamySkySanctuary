@@ -13,6 +13,8 @@ class ImageData(BaseModel):
 class GalleryData(BaseModel):
     gallery_code: str = Field(..., min_length=15, max_length=15)
     auth_code: str = Field(..., min_length=15, max_length=15)
+    uploaded_by: Optional[str] = Field(None, min_length=2, max_length=32)
+    preview_image: Optional[str] = Field(None, max_length=100)
 
 
 class ImageGalleryLink(BaseModel):

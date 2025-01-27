@@ -29,7 +29,6 @@ router = APIRouter(
     tags=["Authentication"],
 )
 
-
 def get_user_access_cookie(user: UserDB):
     scopes = [Scopes.BASIC.value if not user.is_admin else Scopes.ADMIN.value]
     if not user.otp_enabled:
@@ -59,6 +58,8 @@ def check_user_password(user: UserDB, plain_password: str) -> bool:
 
 @router.get("/register")
 def register_page(request: Request):
+    if request.state.user:
+        return RedirectResponse(url="/account", status_code=status.HTTP_307_TEMPORARY_REDIRECT)
     return templates.TemplateResponse("auth/register.html", {"request": request})
 
 
@@ -106,6 +107,8 @@ def register(request: Request, register_data: Annotated[RegisterForm, Form(media
 
 @router.get("/login")
 def login_page(request: Request):
+    if request.state.user:
+        return RedirectResponse(url="/account", status_code=status.HTTP_307_TEMPORARY_REDIRECT)
     return templates.TemplateResponse("auth/login.html", {"request": request})
 
 
@@ -469,7 +472,7 @@ def reset_password_page(request: Request, token: str):
     if not user:
         return RedirectResponse(url="/forgot-password", status_code=status.HTTP_302_FOUND)
 
-    return templates.TemplateResponse("auth/reset-password.html", {"request": request, "token": token})
+    return templates.TemplateResponse("auth/reset-password.html", {"request": request, "user": user, "token": token})
 
 
 @router.post("/auth/reset-password/{token}")

@@ -34,9 +34,15 @@
                     <li class="nav-item">
                         <a class="nav-link custom-nav-item" href="/upload">Image Upload</a>
                     </li>
+                    {% if user %}
+                    <li class="nav-item">
+                        <a class="nav-link custom-nav-item" href="/account">Account</a>
+                    </li>
+                    {% else %}
                     <li class="nav-item">
                         <a class="nav-link custom-nav-item" href="/login">Login</a>
                     </li>
+                    {% endif %}
                     <!-- 
                     <li class="nav-item">
                         <a class="nav-link custom-nav-item" href="/account">Account</a>

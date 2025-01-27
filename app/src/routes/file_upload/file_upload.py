@@ -1,7 +1,7 @@
 from src.utils.image_utils import resize_and_crop_image
 from src.utils.flash import get_flashed_messages, flash, FlashCategory
 from src.schemas.Image import ImageGalleryLink, GalleryData, ImageData
-from src.utils.database import add_gallery_to_db, add_image_gallery_link_to_db, add_image_to_db, close_connection, create_connection, get_gallery_from_db, get_image_from_db, get_image_gallery_links_from_db, remove_gallery_from_db, remove_gallery_links_from_db, remove_image_from_db, remove_image_links_from_db
+from src.utils.database import add_gallery_to_db, add_image_gallery_link_to_db, add_image_to_db, close_connection, create_connection, get_gallery_by_user_from_db, get_gallery_from_db, get_image_from_db, get_image_gallery_links_from_db, remove_gallery_from_db, remove_gallery_links_from_db, remove_image_from_db, remove_image_links_from_db
 from src.dependencies import *
 import hashlib
 import shutil
@@ -20,15 +20,17 @@ templates.env.globals["get_flashed_messages"] = get_flashed_messages
 
 @router.get("/upload", include_in_schema=True)
 async def main(request: Request, response: Response):
+    user = request.state.user
     string_types = ""
     for type in config.ALLOWED_FILE_TYPES:
         string_types += f"{type}, "
-    return templates.TemplateResponse(name="main/upload.html", context={"request": request, "allowed_types": string_types, "base_url": str(request.base_url)[:-1]})
+    return templates.TemplateResponse(name="main/upload.html", context={"request": request, "user": user, "allowed_types": string_types, "base_url": str(request.base_url)[:-1]})
 
 
 @router.post("/upload", include_in_schema=True)
 async def upload_file(request: Request, uploaded_images: List[UploadFile] = File(...), expire: int = Form(0), imgsize: int = Form("original"), width: int = Form(-1), height: int = Form(-1)):
-    print(f"Expire: {expire}, Size: {imgsize}, Width: {width}, Height: {height}")
+    user = request.state.user
+    print(user)
     sizes = {
         0: [-1, -1],
         1: [934, 282],
@@ -39,16 +41,19 @@ async def upload_file(request: Request, uploaded_images: List[UploadFile] = File
         6: [-1, -1]
     }
     if imgsize not in sizes:
+        print(f"Invalid image size: {imgsize}")
         raise ValueError(f"Invalid image size: {imgsize}")
     if imgsize != 6:
         width = sizes[imgsize][0]
         height = sizes[imgsize][1]
-    if width <= -1 or height <= -1:
+    if width < -1 or height < -1:
+        print(f"Invalid width or height: {width} x {height}")
         raise ValueError(f"Invalid width or height: {width} x {height}, must be greater than 0.")
     
     saved_files: list[ImageData] = []
     for image in uploaded_images:
         if image.content_type not in config.ALLOWED_FILE_TYPES:
+            print(f"Invalid file type: {image.content_type}")
             raise FileTypeException(image.filename, image.content_type, config.ALLOWED_FILE_TYPES)
         
         auth_hash = hashlib.md5(f"{time.time_ns()}-{image.size}-{image.filename}".encode("utf-8"))
@@ -70,7 +75,8 @@ async def upload_file(request: Request, uploaded_images: List[UploadFile] = File
             path=save_path,
             url=f"/images/{filename}",
             auth_code=auth_hash.hexdigest()[-15:],
-            filesize=os.path.getsize(save_path)
+            filesize=os.path.getsize(save_path),
+            uploaded_by=user.username if user else None,
         )
         
         saved_files.append(image_data)
@@ -93,7 +99,8 @@ async def upload_file(request: Request, uploaded_images: List[UploadFile] = File
 
         gallery_data = GalleryData(
             gallery_code=gallery_hash.hexdigest()[-15:],
-            auth_code=gallery_hash.hexdigest()[-15:]
+            auth_code=gallery_hash.hexdigest()[-15:],
+            uploaded_by=user.username if user else None,
         )
         
         connection = create_connection("Website")
@@ -113,8 +120,40 @@ async def upload_file(request: Request, uploaded_images: List[UploadFile] = File
     return RedirectResponse("/upload", status_code=status.HTTP_400_BAD_REQUEST)
 
 
+@router.get('/gallery')
+async def gallery(request: Request):
+    user = request.state.user
+    if not user:
+        return RedirectResponse("/login", status_code=status.HTTP_303_SEE_OTHER)
+    connection = create_connection("Website")
+    
+    galleries = get_gallery_by_user_from_db(connection, user)
+    
+    for gallery in galleries:
+        links = get_image_gallery_links_from_db(connection, gallery.gallery_code)
+        if not links:
+            remove_gallery_from_db(connection, gallery.gallery_code)
+            close_connection(connection)
+            continue # If the gallery has no images, remove it from the database and continue to the next gallery
+            # raise FileNotFoundException(file_name=gallery.gallery_code, message="Gallery not found.")
+        
+        preview_image = get_image_from_db(connection, links[0].filename)
+        gallery.preview_image = preview_image.url
+    
+    if not galleries:
+        close_connection(connection)
+        raise FileNotFoundException(file_name=user.username, message="No gallerys found.")
+
+    close_connection(connection)
+    return templates.TemplateResponse(
+        name="main/galleries.html",
+        context={"request": request, "user": user, "galleries": galleries, "base_url": str(request.base_url)[:-1]}
+    )
+
+
 @router.get('/gallery/{gallery_code}')
 async def gallery(request: Request, gallery_code: str):
+    user = request.state.user
     connection = create_connection("Website")
     
     gallery_data = get_gallery_from_db(connection, gallery_code)
@@ -138,12 +177,13 @@ async def gallery(request: Request, gallery_code: str):
     close_connection(connection)
     return templates.TemplateResponse(
         name="main/gallery.html",
-        context={"request": request, "images": images, "base_url": str(request.base_url)[:-1]}
+        context={"request": request, "user": user, "images": images, "base_url": str(request.base_url)[:-1]}
     )
 
 
 @router.get('/gallery/{gallery_code}/{auth_code}')
 async def gallery(request: Request, gallery_code: str, auth_code: str):
+    user = request.state.user
     connection = create_connection("Website")
     
     gallery_data = get_gallery_from_db(connection, gallery_code)
@@ -170,12 +210,13 @@ async def gallery(request: Request, gallery_code: str, auth_code: str):
     close_connection(connection)
     return templates.TemplateResponse(
         name="main/gallery.html",
-        context={"request": request, "images": images, "gallery_code": gallery_code, "auth_code": auth_code, "base_url": str(request.base_url)[:-1]}
+        context={"request": request, "user": user, "images": images, "gallery_code": gallery_code, "auth_code": auth_code, "base_url": str(request.base_url)[:-1]}
     )
 
 
 @router.get('/image/{file_name}')
 async def image(request: Request, file_name: str):
+    user = request.state.user
     connection = create_connection("Website")
     
     image = get_image_from_db(connection, file_name)
@@ -187,12 +228,13 @@ async def image(request: Request, file_name: str):
     close_connection(connection)
     return templates.TemplateResponse(
         name="main/image.html",
-        context={"request": request, "image": image, "base_url": str(request.base_url)[:-1]}
+        context={"request": request, "user": user, "image": image, "base_url": str(request.base_url)[:-1]}
     )
 
 
 @router.get('/image/{file_name}/{auth_code}')
 async def manage_image(request: Request, file_name: str, auth_code: str):
+    user = request.state.user
     connection = create_connection("Website")
     
     image = get_image_from_db(connection, file_name)
@@ -208,7 +250,7 @@ async def manage_image(request: Request, file_name: str, auth_code: str):
     close_connection(connection)
     return templates.TemplateResponse(
         name="main/image.html",
-        context={"request": request, "image": image, "auth_code": auth_code, "base_url": str(request.base_url)[:-1]}
+        context={"request": request, "user": user, "image": image, "auth_code": auth_code, "base_url": str(request.base_url)[:-1]}
     )
 
 

@@ -18,7 +18,11 @@
                     <li><a href="/memory">Memory Lane</a></li>
                     <li><a href="/team">The Team</a></li>
                     <li><a href="/upload">Image Upload Tool</a></li>
+                    {% if user %}
+                    <li><a href="/account">Account</a></li>
+                    {% else %}
                     <li><a href="/login">Login</a></li>
+                    {% endif %}
                 </ul>
             </div>
             <div class="col item">

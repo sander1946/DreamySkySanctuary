@@ -102,8 +102,8 @@ def delete_query(connection: PooledMySQLConnection | MySQLConnectionAbstract, qu
 
 def add_image_to_db(connection: PooledMySQLConnection | MySQLConnectionAbstract, image: ImageData) -> None:
     logger.debug(f"Adding image: `{image.filename}` to the database.")
-    query = "INSERT INTO images (filename, auth_code, path, url, filesize) VALUES (%s, %s, %s, %s, %s)"
-    values = (image.filename, image.auth_code, image.path, image.url, image.filesize)
+    query = "INSERT INTO images (filename, auth_code, path, url, filesize, uploaded_by) VALUES (%s, %s, %s, %s, %s, %s)"
+    values = (image.filename, image.auth_code, image.path, image.url, image.filesize, image.uploaded_by)
     insert_query(connection, query, values)
 
 
@@ -117,6 +117,16 @@ def get_image_from_db(connection: PooledMySQLConnection | MySQLConnectionAbstrac
     return None
 
 
+def get_images_by_user_from_db(connection: PooledMySQLConnection | MySQLConnectionAbstract, user: UserDB) -> list[ImageData]:
+    logger.debug(f"Getting images of user: `{user.username}` from the database.")
+    query = "SELECT * FROM images WHERE uploaded_by = %s"
+    values = (user.username,)
+    result = select_query(connection, query, values)
+    if result:
+        return [ImageData(**image) for image in result]
+    return None
+
+
 def remove_image_from_db(connection: PooledMySQLConnection | MySQLConnectionAbstract, filename: str) -> None:
     logger.debug(f"Removing image: `{filename}` from the database.")
     query = "DELETE FROM images WHERE filename = %s"
@@ -126,8 +136,8 @@ def remove_image_from_db(connection: PooledMySQLConnection | MySQLConnectionAbst
 
 def add_gallery_to_db(connection: PooledMySQLConnection | MySQLConnectionAbstract, gallery: GalleryData) -> None:
     logger.debug(f"Adding gallery: `{gallery.gallery_code}` to the database.")
-    query = "INSERT INTO galleries (gallery_code, auth_code) VALUES (%s, %s)"
-    values = (gallery.gallery_code, gallery.auth_code)
+    query = "INSERT INTO galleries (gallery_code, auth_code, uploaded_by) VALUES (%s, %s, %s)"
+    values = (gallery.gallery_code, gallery.auth_code, gallery.uploaded_by)
     insert_query(connection, query, values)
 
 
@@ -138,6 +148,16 @@ def get_gallery_from_db(connection: PooledMySQLConnection | MySQLConnectionAbstr
     result = select_query(connection, query, values)
     if result:
         return GalleryData(**result[0])
+    return None
+
+
+def get_gallery_by_user_from_db(connection: PooledMySQLConnection | MySQLConnectionAbstract, user: UserDB) -> list[GalleryData]:
+    logger.debug(f"Getting galleries of user: `{user.username}` from the database.")
+    query = "SELECT * FROM galleries WHERE uploaded_by = %s"
+    values = (user.username,)
+    result = select_query(connection, query, values)
+    if result:
+        return [GalleryData(**gallery) for gallery in result]
     return None
 
 
