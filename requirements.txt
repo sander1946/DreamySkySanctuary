@@ -17,4 +17,4 @@ fastapi_login
 werkzeug
 python-jose[cryptography]
 pyotp
-qrcode[pil]
+yagmail
