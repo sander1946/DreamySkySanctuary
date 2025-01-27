@@ -30,6 +30,12 @@ OTP_WINDOW: int = 2
 
 DISCORD_OWNER_ID: int = dotenv.get_key(ENV_FILE, "DISCORD_OWNER_ID")
 
+SMTP_SERVER: str = dotenv.get_key(ENV_FILE, "SMTP_SERVER")
+SMTP_PORT: int = dotenv.get_key(ENV_FILE, "SMTP_PORT")
+SMTP_USERNAME: str = dotenv.get_key(ENV_FILE, "SMTP_USERNAME")
+SMTP_PASSWORD: str = dotenv.get_key(ENV_FILE, "SMTP_PASSWORD")
+
+
 ALLOWED_FILE_TYPES: dict[str, str] = {
     "image/jpeg": "jpg", 
     "image/jpg": "jpg", 

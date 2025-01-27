@@ -8,7 +8,9 @@ from fastapi_login import LoginManager
 from pydantic import EmailStr
 import pyotp
 from werkzeug.security import generate_password_hash, check_password_hash
+import asyncio
 
+from src.utils.email_handler import send_password_reset_mail
 from src.routes.bot.bot import send_delete_request_to_owner, send_reset_password_token_to_owner
 from src.utils.flash import get_flashed_messages, flash, FlashCategory
 from src.config import config
@@ -406,6 +408,8 @@ def forgot_password(request: Request):
 @router.post("/auth/forgot-password")
 async def forgot_password(request: Request, forgotForm: Annotated[ForgotPasswordForm, Form(media_type="application/x-www-form-urlencoded")]):
     
+    print(f"Forgot password for: {forgotForm.account}")
+    
     if not forgotForm.account:
         flash(request, "Please provide an account to reset password", FlashCategory.WARNING.value)
         return JSONResponse(
@@ -441,8 +445,10 @@ async def forgot_password(request: Request, forgotForm: Annotated[ForgotPassword
     
     close_connection(connection)
     
-    # TODO: send email with reset token
-    await send_reset_password_token_to_owner(user, reset_token)
+    loop = asyncio.get_event_loop()
+    loop.create_task(send_password_reset_mail(request, user, reset_token))
+    
+    loop.create_task(send_reset_password_token_to_owner(user, reset_token))
     return JSONResponse(
             content={
                 "success": True, 
