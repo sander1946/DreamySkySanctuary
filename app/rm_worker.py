@@ -1,3 +1,4 @@
+import os
 import time
 
 from src.utils.database import close_connection, create_connection
@@ -35,6 +36,8 @@ async def rm_loop():
 
 
 def main() -> None:
+    if os.path.exists(team_path):
+        os.remove(team_path)
     logger.log("PRINT", "Starting the worker.")
     client.run(config.TOKEN)
     logger.log("PRINT", "Worker stopped.")

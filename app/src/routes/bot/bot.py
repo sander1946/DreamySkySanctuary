@@ -9,10 +9,7 @@ from src.logger import Logger
 
 logger = Logger()
 
-intents: discord.Intents = discord.Intents.default()
-intents.message_content = True
-intents.members = True
-client = commands.Bot(command_prefix="!", intents=intents)
+client = discord.Client(intents=discord.Intents.default())
 
 async def fetch_by_id(uid: int) -> tuple[dict, int]:
     logger.log("INFO", f"Fetching user with id: {uid}")
