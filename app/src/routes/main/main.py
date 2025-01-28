@@ -27,7 +27,7 @@ async def main(request: Request, response: Response):
         Announcement(title="This is a test announcement",
         description = "This is a test announcement to show how the announcements are displayed.",
         date = datetime.now() - timedelta(days=1),
-        image = "/public/imgs/flags/en.png"),
+        image = "/public/imgs/flags/en.webp"),
     ]    
     
     return templates.TemplateResponse(name="main/main.html", context={"request": request, "user": user, "announcements": announcements})

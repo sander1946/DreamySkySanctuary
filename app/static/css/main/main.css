@@ -1,6 +1,6 @@
 @import url(/static/css/main/flash.css);
 :root {
-  --background_img: url(/public/imgs/bg_aeri.jpg);
+  --background_img: url(/public/imgs/background_aeri.webp);
 }
 
 .min-vh-90 {
