@@ -1,5 +1,5 @@
-function showFlashMessage(message, category) {
-    var main_grid = document.querySelector('.main-grid');
+function showFlashMessage(selector, message, category) {
+    var main_grid = document.querySelector(selector);
     var flash = document.createElement("div");
     flash.classList.add("flash-"+category, "bg-glass", "text-center");
     flash.innerHTML = message;

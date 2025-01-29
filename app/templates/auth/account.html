@@ -35,6 +35,7 @@ Account
                 <p class="lead">Created at: {{ user.created_at }}</p>
             </div>
             <div class="account-header-content-item">
+                <button class="mb-3 btn btn-primary" onclick="window.location.href='/account/2fa'">{{ 'Disable' if user.otp_enabled else 'Enable' }} 2FA</button>
                 <button class="mb-3 btn btn-primary" onclick="window.location.href='/logout'">Logout</button>
             </div>
         </div>

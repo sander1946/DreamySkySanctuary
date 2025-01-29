@@ -15,7 +15,7 @@ var loadFile = function(event) {
     output.innerHTML = '';
     for (var i = 0; i < event.target.files.length; i++) {
         if (event.target.files[i].size > 80000000) {
-            showFlashMessage(event.target.files[i].name + '- File size must be less than 8MB', 'error');
+            showFlashMessage('.main-grid', event.target.files[i].name + '- File size must be less than 8MB', 'error');
             return;
         }
         var preview = document.createElement("div");

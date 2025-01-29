@@ -49,7 +49,7 @@ class UserDB(User):
 
 
 class UserRequestSchema(BaseModel):
-    token: str | None = None
+    token: str = Field(..., min_length=6, max_length=6)
 
 
 class ForgotPasswordForm(BaseModel):

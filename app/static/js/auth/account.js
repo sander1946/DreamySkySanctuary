@@ -3,7 +3,7 @@ form_username.addEventListener('submit', function(event) {
     event.preventDefault();
     
     const data = new URLSearchParams(new FormData(form_username));
-
+    console.log(data)
     fetch('/auth/change-username', {
         method: 'POST',
         headers: {
@@ -16,7 +16,7 @@ form_username.addEventListener('submit', function(event) {
                 window.location.href = data.redirect;
             }
         } else {
-            showFlashMessage(data.detail, data.category);
+            showFlashMessage('.main-grid', data.detail, data.category);
         }
     }).catch(error => {
         console.error('Error:', error);
@@ -41,7 +41,7 @@ form_email.addEventListener('submit', function(event) {
                 window.location.href = data.redirect;
             }
         } else {
-            showFlashMessage(data.detail, data.category);
+            showFlashMessage('.main-grid', data.detail, data.category);
         }
     }).catch(error => {
         console.error('Error:', error);
@@ -66,7 +66,7 @@ form_password.addEventListener('submit', function(event) {
                 window.location.href = data.redirect;
             }
         } else {
-            showFlashMessage(data.detail, data.category);
+            showFlashMessage('.main-grid', data.detail, data.category);
         }
     }).catch(error => {
         console.error('Error:', error);

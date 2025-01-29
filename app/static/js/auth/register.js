@@ -98,7 +98,7 @@ form.addEventListener('submit', function(event) {
                 window.location.href = data.redirect;
             }
         } else {
-            showFlashMessage(data.detail, data.category);
+            showFlashMessage('.main-grid', data.detail, data.category);
         }
     }).catch(error => {
         console.error('Error:', error);

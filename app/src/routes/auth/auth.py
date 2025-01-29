@@ -205,7 +205,8 @@ def Generate_OTP(request: Request, user: UserDB = Depends(login_manager)):
 
 
 @router.post('/auth/otp/verify')
-def Verify_OTP(request: Request, payload: UserRequestSchema, user: UserDB = Depends(login_manager)):
+def Verify_OTP(request: Request, payload: Annotated[UserRequestSchema, Form(media_type="application/x-www-form-urlencoded")], user: UserDB = Depends(login_manager)):
+    print(payload)
     if not user:
         return JSONResponse(
             content={
@@ -249,7 +250,7 @@ def Verify_OTP(request: Request, payload: UserRequestSchema, user: UserDB = Depe
                 "category": FlashCategory.WARNING.value, 
                 "user": user.username
                 },
-            status_code=status.HTTP_400_BAD_REQUEST
+            status_code=status.HTTP_200_OK
         )
     
     user.otp_verified = True
@@ -268,7 +269,7 @@ def Verify_OTP(request: Request, payload: UserRequestSchema, user: UserDB = Depe
 
 
 @router.post('/auth/otp/validate') # This is the endpoint that will be used to validate the OTP token, it will be used to authenticate the user after login
-def Validate_OTP(request: Request, payload: UserRequestSchema, user: Annotated[UserDB, Security(login_manager)]):
+def Validate_OTP(request: Request, payload: Annotated[UserRequestSchema, Form(media_type="application/x-www-form-urlencoded")], user: Annotated[UserDB, Security(login_manager)]):
     if not user.otp_enabled:
         return JSONResponse(
             content={
@@ -314,7 +315,8 @@ def Validate_OTP(request: Request, payload: UserRequestSchema, user: Annotated[U
 
 
 @router.post('/auth/otp/remove')
-def Disable_OTP(request: Request, payload: UserRequestSchema, user: UserDB = Depends(login_manager)):
+def Disable_OTP(request: Request, payload: Annotated[UserRequestSchema, Form(media_type="application/x-www-form-urlencoded")], user: UserDB = Depends(login_manager)):
+    print(payload)
     if not user.otp_enabled:
         return JSONResponse(
             content={
@@ -326,28 +328,18 @@ def Disable_OTP(request: Request, payload: UserRequestSchema, user: UserDB = Dep
             status_code=status.HTTP_400_BAD_REQUEST
         )
     
-    if not user.otp_verified:
-        return JSONResponse(
-            content={
-                "success": False, 
-                "detail": "OTP must be verified first, before it can be disabled. pls regenerate the OTP and verify it first", 
-                "category": FlashCategory.WARNING.value, 
-                "user": user.username
-                },
-            status_code=status.HTTP_400_BAD_REQUEST
-        )
-    
-    totp = pyotp.TOTP(user.otp_base32)
-    if not totp.verify(otp=payload.token, valid_window=config.OTP_WINDOW):
-        return JSONResponse(
-            content={
-                "success": False, 
-                "detail": "Invalid OTP token", 
-                "category": FlashCategory.WARNING.value, 
-                "user": user.username
-                },
-            status_code=status.HTTP_401_UNAUTHORIZED
-        )
+    if user.otp_verified:
+        totp = pyotp.TOTP(user.otp_base32)
+        if not totp.verify(otp=payload.token, valid_window=config.OTP_WINDOW):
+            return JSONResponse(
+                content={
+                    "success": False, 
+                    "detail": "Invalid OTP token", 
+                    "category": FlashCategory.WARNING.value, 
+                    "user": user.username
+                    },
+                status_code=status.HTTP_401_UNAUTHORIZED
+            )
     
     user.otp_enabled = False
     user.otp_verified = False
@@ -370,6 +362,11 @@ def Disable_OTP(request: Request, payload: UserRequestSchema, user: UserDB = Dep
 @router.get("/account")
 def account(request: Request, user: Annotated[UserDB, Security(login_manager)]):
     return templates.TemplateResponse("auth/account.html", {"request": request, "user": user})
+
+
+@router.get("/account/2fa")
+def account_2fa(request: Request, user: Annotated[UserDB, Security(login_manager)]):
+    return templates.TemplateResponse("auth/account_2fa.html", {"request": request, "user": user})
 
 
 @router.get("/admin")
@@ -513,7 +510,7 @@ def reset_password(request: Request, token: str, resetPasswordFrom: Annotated[Re
 
 
 @router.post("/auth/change-username")
-def change_username(request: Request, user: Annotated[UserDB, Security(login_manager)], username: Annotated[str, Form(media_type="application/x-www-form-urlencoded")]):
+def change_username(request: Request, user: Annotated[UserDB, Security(login_manager)], username: Annotated[str, Form(min_length=2, max_length=32, media_type="application/x-www-form-urlencoded")]):
     connection = create_connection("Website")
     current_user = get_user_by_username(connection, username)
     

@@ -1,0 +1,83 @@
+@import url(/static/css/main/main.css);
+
+.svg-qrcode {
+    display: none;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    height: 200px;
+}
+
+/* (A) FULLSCREEN OVERLAY */
+.fullover {
+    /* (A1) COVER ENTIRE WINDOW */
+    position: fixed;
+    top: 0; left: 0; z-index: 999;
+    width: 100vw; height: 100vh;
+
+    /* (A2) BACKGROUND */
+    background: rgb(255, 255, 255, 0.0);
+    
+    backdrop-filter: blur(5px);
+
+    /* (A3) CENTER CONTENT */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    /* (A4) HIDE OVERLAY BY DEFAULT */
+    opacity: 0; visibility: hidden;
+    transition: background 0.5s ease;
+}
+
+/* (B) SHOW OVERLAY */
+.fullover.show {
+    opacity: 1; visibility: visible;
+    background: rgb(255, 255, 255, 0.3);
+}
+
+.account {
+    grid-area: Account;
+}
+
+.main-grid {
+    display: grid;
+    gap: 5px;
+    padding: 10px;
+    width: 98vw;
+    grid-template-areas: 
+        'Flash'
+        'Account';
+}
+
+.flash {
+    grid-area: Flash;
+}
+
+@media (min-width: 1000px) and (max-width: 1200px) {
+    .main-grid {
+        grid-template-columns: auto;
+        grid-template-areas: 
+            'Flash'
+            'Account';
+    }
+}
+
+@media (min-width: 1200px) and (max-width: 1400px) {
+    .main-grid {
+        grid-template-columns: auto;
+        grid-template-areas: 
+            'Flash'
+            'Account';
+    }
+}
+
+@media (min-width: 1400px) {
+    .main-grid {
+        grid-template-columns: auto;
+        grid-template-areas: 
+            'Flash'
+            'Account';
+    }
+}
