@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block custom_css %}
+<!-- Bootstrap CSS -->
+<link href="/static/css/bootstrap/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="/static/icons/font/bootstrap-icons.css">
+<link href="/static/css/main/upload.css" rel="stylesheet">
+{% endblock %}
+
+{% block title %}
+Images
+{% endblock %}
+
+{% block content %}
+<div class="background">
+</div>
+
+<main class="main-grid">
+    {# Flashing message start here #}
+    {% for message in get_flashed_messages(request) %}
+        <div class="flash-{{ message.category }} bg-glass text-center">{{ message.message }}</div>
+    {% endfor %}
+    {# Flashing message end here #}
+
+    <div class="viewer bg-glass">
+        {% if images %}
+        <h2 class="text-center">Uploaded Images:</h2>
+        <div class="text-center">
+            <a target="_blank" href="/upload" class="custom-link">Upload more image(s)</a>
+        </div>
+        <div class="row row-cols-auto align-items-center justify-content-center text-center">  
+            {% for image in images %}
+            <div class="col-auto thumb-wrapper">
+                <div class="thumb">
+                    <a target="_blank" class="thumb-image" href="/image/{{ image.filename }}/{{ image.auth_code }}" style="background-image: url('{{ image.url }}');"></a>
+                    <form class="remove" method="POST" action="{{ base_url }}/image/remove/{{ image.filename }}/{{ image.auth_code }}">
+                        <a target="_blank" href="/image/{{ image.filename }}/{{ image.auth_code }}" class="custom-hidden-link">
+                            <p class="thumb-name">{{ image.filename }}</p>
+                        </a>
+
+                        <a target="_blank" href="/image/{{ image.filename }}/{{ image.auth_code }}" class="btn btn-primary"><i class="bi bi-eye"></i> View</a>
+                        <a target="_blank" href="/image/{{ image.filename }}" class="btn btn-primary"><i class="bi bi-share-fill"></i></a>
+                        <button action="submit" class="btn btn-danger"><i class="bi bi-trash"></i></button>
+                    </form>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div>
+            <h2 class="text-center">No Images Uploaded:</h2>
+            <p class="text-center">There are no images uploaded by you at the moment. Please upload an image to view it <a href="/upload" class="custom-link">here.</a></p>
+        </div>
+        {% endif %}
+    </div>
+
+    <script src="/static/js/main/image.js"></script>
+</main>
+{% endblock %}

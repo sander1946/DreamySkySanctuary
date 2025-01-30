@@ -1,7 +1,7 @@
 from src.utils.image_utils import resize_and_crop_image
 from src.utils.flash import get_flashed_messages, flash, FlashCategory
 from src.schemas.Image import ImageGalleryLink, GalleryData, ImageData
-from src.utils.database import add_gallery_to_db, add_image_gallery_link_to_db, add_image_to_db, close_connection, create_connection, get_gallery_by_user_from_db, get_gallery_from_db, get_image_from_db, get_image_gallery_links_from_db, remove_gallery_from_db, remove_gallery_links_from_db, remove_image_from_db, remove_image_links_from_db
+from src.utils.database import add_gallery_to_db, add_image_gallery_link_to_db, add_image_to_db, close_connection, create_connection, get_gallery_by_user_from_db, get_gallery_from_db, get_image_from_db, get_image_gallery_links_from_db, get_images_by_user_from_db, remove_gallery_from_db, remove_gallery_links_from_db, remove_image_from_db, remove_image_links_from_db
 from src.dependencies import *
 import hashlib
 import shutil
@@ -133,20 +133,21 @@ async def gallery(request: Request):
     
     galleries = get_gallery_by_user_from_db(connection, user)
     
-    for gallery in galleries:
-        links = get_image_gallery_links_from_db(connection, gallery.gallery_code)
-        if not links:
-            remove_gallery_from_db(connection, gallery.gallery_code)
-            close_connection(connection)
-            continue # If the gallery has no images, remove it from the database and continue to the next gallery
-            # raise FileNotFoundException(file_name=gallery.gallery_code, message="Gallery not found.")
+    if galleries:
+        for gallery in galleries:
+            links = get_image_gallery_links_from_db(connection, gallery.gallery_code)
+            if not links:
+                remove_gallery_from_db(connection, gallery.gallery_code)
+                close_connection(connection)
+                continue # If the gallery has no images, remove it from the database and continue to the next gallery
+                # raise FileNotFoundException(file_name=gallery.gallery_code, message="Gallery not found.")
+            
+            preview_image = get_image_from_db(connection, links[0].filename)
+            gallery.preview_image = preview_image.url
         
-        preview_image = get_image_from_db(connection, links[0].filename)
-        gallery.preview_image = preview_image.url
-    
-    if not galleries:
-        close_connection(connection)
-        raise FileNotFoundException(file_name=user.username, message="No gallerys found.")
+    # if not galleries:
+    #     close_connection(connection)
+    #     raise FileNotFoundException(file_name=user.username, message="No gallerys found.")
 
     close_connection(connection)
     return templates.TemplateResponse(
@@ -215,6 +216,22 @@ async def gallery(request: Request, gallery_code: str, auth_code: str):
     return templates.TemplateResponse(
         name="main/gallery.html",
         context={"request": request, "user": user, "images": images, "gallery_code": gallery_code, "auth_code": auth_code, "base_url": str(request.base_url)[:-1]}
+    )
+
+
+@router.get('/image')
+async def image(request: Request):
+    user = request.state.user
+    if not user:
+        return RedirectResponse("/login", status_code=status.HTTP_303_SEE_OTHER)
+    connection = create_connection("Website")
+    
+    images = get_images_by_user_from_db(connection, user)
+    
+    close_connection(connection)
+    return templates.TemplateResponse(
+        name="main/images.html",
+        context={"request": request, "user": user, "images": images, "base_url": str(request.base_url)[:-1]}
     )
 
 
