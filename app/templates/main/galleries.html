@@ -33,15 +33,13 @@ Galleries
             <div class="col-auto thumb-wrapper">
                 <div class="thumb">
                     <a target="_blank" class="thumb-image" href="/gallery/{{ gallerie.gallery_code }}/{{ gallerie.auth_code }}" style="background-image: url('{{ gallerie.preview_image }}');"></a>
-                    <form class="remove" method="POST" action="{{ base_url }}/gallery/remove/{{ gallerie.gallery_code }}/{{ gallerie.auth_code }}">
-                        <a target="_blank" href="/gallery/{{ gallerie.gallery_code }}/{{ gallerie.auth_code }}" class="custom-hidden-link">
-                            <p class="thumb-name">{{ gallerie.gallery_code }}</p>
-                        </a>
+                    <a target="_blank" href="/gallery/{{ gallerie.gallery_code }}/{{ gallerie.auth_code }}" class="custom-hidden-link">
+                        <p class="thumb-name">{{ gallerie.gallery_code }}</p>
+                    </a>
 
-                        <a target="_blank" href="/gallery/{{ gallerie.gallery_code }}/{{ gallerie.auth_code }}" class="btn btn-primary"><i class="bi bi-eye"></i> View</a>
-                        <a target="_blank" href="/gallery/{{ gallerie.gallery_code }}" class="btn btn-primary"><i class="bi bi-share-fill"></i></a>
-                        <button action="submit" class="btn btn-danger"><i class="bi bi-trash"></i></button>
-                    </form>
+                    <a target="_blank" href="/gallery/{{ gallerie.gallery_code }}/{{ gallerie.auth_code }}" class="btn btn-primary"><i class="bi bi-eye"></i> View</a>
+                    <a target="_blank" href="/gallery/{{ gallerie.gallery_code }}" class="btn btn-primary"><i class="bi bi-share-fill"></i></a>
+                    <button class="btn btn-danger" onclick="send_remove_post_request('{{ base_url }}/gallery/remove/{{ gallerie.gallery_code }}/{{ gallerie.auth_code }}');"><i class="bi bi-trash"></i></button>
                 </div>
             </div>
             {% endfor %}

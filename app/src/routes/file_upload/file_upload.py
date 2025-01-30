@@ -42,19 +42,16 @@ async def upload_file(request: Request, uploaded_images: List[UploadFile] = File
         6: [-1, -1]
     }
     if imgsize not in sizes:
-        print(f"Invalid image size: {imgsize}")
         raise ValueError(f"Invalid image size: {imgsize}")
     if imgsize != 6:
         width = sizes[imgsize][0]
         height = sizes[imgsize][1]
     if width < -1 or height < -1:
-        print(f"Invalid width or height: {width} x {height}")
         raise ValueError(f"Invalid width or height: {width} x {height}, must be greater than 0.")
     
     saved_files: list[ImageData] = []
     for image in uploaded_images:
         if image.content_type not in config.ALLOWED_FILE_TYPES:
-            print(f"Invalid file type: {image.content_type}")
             raise FileTypeException(image.filename, image.content_type, config.ALLOWED_FILE_TYPES)
         
         auth_hash = hashlib.md5(f"{time.time_ns()}-{image.size}-{image.filename}".encode("utf-8"))
@@ -79,8 +76,6 @@ async def upload_file(request: Request, uploaded_images: List[UploadFile] = File
             uploaded_by=user.username if user else None,
             delete_after=datetime.datetime.now() + datetime.timedelta(days=expire) if expire > 0 else None,
         )
-        
-        print(image_data)
         
         saved_files.append(image_data)
     if len(saved_files) == 1:
@@ -132,7 +127,7 @@ async def gallery(request: Request):
     connection = create_connection("Website")
     
     galleries = get_gallery_by_user_from_db(connection, user)
-    
+    gallery_list = []
     if galleries:
         for gallery in galleries:
             links = get_image_gallery_links_from_db(connection, gallery.gallery_code)
@@ -141,7 +136,7 @@ async def gallery(request: Request):
                 close_connection(connection)
                 continue # If the gallery has no images, remove it from the database and continue to the next gallery
                 # raise FileNotFoundException(file_name=gallery.gallery_code, message="Gallery not found.")
-            
+            gallery_list.append(gallery)
             preview_image = get_image_from_db(connection, links[0].filename)
             gallery.preview_image = preview_image.url
         
@@ -152,7 +147,7 @@ async def gallery(request: Request):
     close_connection(connection)
     return templates.TemplateResponse(
         name="main/galleries.html",
-        context={"request": request, "user": user, "galleries": galleries, "base_url": str(request.base_url)[:-1]}
+        context={"request": request, "user": user, "galleries": gallery_list, "base_url": str(request.base_url)[:-1]}
     )
 
 
@@ -275,7 +270,6 @@ async def manage_image(request: Request, file_name: str, auth_code: str):
     )
 
 
-@router.get('/image/remove/{file_name}/{auth_code}')
 @router.post('/image/remove/{file_name}/{auth_code}')
 async def remove_image(request: Request, file_name: str, auth_code: str):
     connection = create_connection("Website")
@@ -284,25 +278,43 @@ async def remove_image(request: Request, file_name: str, auth_code: str):
 
     if not image:
         close_connection(connection)
-        raise FileNotFoundException(file_name=file_name, message="Image not found.")
+        return JSONResponse(
+            content={
+                "success": False,
+                "detail": "Image not found.",
+                "category": FlashCategory.WARNING.value,
+                }, 
+            status_code=status.HTTP_404_NOT_FOUND
+            )
     
     if auth_code != image.auth_code:
         close_connection(connection)
-        return RedirectResponse(f"/", status_code=status.HTTP_307_TEMPORARY_REDIRECT) # redirect to home page if someone tries to remove an image without the correct auth code
+        return JSONResponse(
+            content={
+                "success": False,
+                "detail": "Invalid auth code.",
+                "category": FlashCategory.WARNING.value,
+                },
+            status_code=status.HTTP_403_FORBIDDEN
+            )
     
-    print(f"Image {file_name} removed from {image.path}")
-    os.remove(image.path)
+    if os.path.exists(image.path):
+        os.remove(image.path)
     
     remove_image_from_db(connection, file_name)
     remove_image_links_from_db(connection, file_name)
     
     close_connection(connection)
-    if request.method == "POST":
-        return RedirectResponse(request.headers.get('referer') if request.headers.get('referer').startswith(str(request.base_url)) else "/upload" , status_code=status.HTTP_303_SEE_OTHER)
-    return RedirectResponse("/upload", status_code=status.HTTP_303_SEE_OTHER)
+    return JSONResponse(
+        content={
+            "success": True,
+            "detail": "Image removed.",
+            "category": FlashCategory.SUCCESS.value,
+            },
+        status_code=status.HTTP_200_OK
+        )
 
 
-@router.get('/gallery/remove/{gallery_code}/{auth_code}')
 @router.post('/gallery/remove/{gallery_code}/{auth_code}')
 async def remove_gallery(request: Request, gallery_code: str, auth_code: str):
     connection = create_connection("Website")
@@ -311,16 +323,38 @@ async def remove_gallery(request: Request, gallery_code: str, auth_code: str):
     
     if not gallery_data:
         close_connection(connection)
-        raise FileNotFoundException(file_name=gallery_code, message="Gallery not found.")
+        return JSONResponse(
+            content={
+                "success": False,
+                "detail": "Gallery not found.",
+                "category": FlashCategory.WARNING.value,
+                }, 
+            status_code=status.HTTP_404_NOT_FOUND
+            )
     
     if auth_code != gallery_data.auth_code:
-        return RedirectResponse(f"/gallery/{gallery_code}", status_code=status.HTTP_307_TEMPORARY_REDIRECT) # redirect to home page if someone tries to remove an gallery without the correct auth code
+        close_connection(connection)
+        return JSONResponse(
+            content={
+                "success": False,
+                "detail": "Invalid auth code.",
+                "category": FlashCategory.WARNING.value,
+                },
+            status_code=status.HTTP_403_FORBIDDEN
+            )
     
     links = get_image_gallery_links_from_db(connection, gallery_code)
     if not links:
         remove_gallery_from_db(connection, gallery_code)
         close_connection(connection)
-        raise FileNotFoundException(file_name=gallery_code, message="Gallery not found.")
+        return JSONResponse(
+            content={
+                "success": False,
+                "detail": "Gallery not found.",
+                "category": FlashCategory.WARNING.value,
+                }, 
+            status_code=status.HTTP_404_NOT_FOUND
+            )
     
     remove_gallery_from_db(connection, gallery_code)
     remove_gallery_links_from_db(connection, gallery_code)
@@ -329,9 +363,14 @@ async def remove_gallery(request: Request, gallery_code: str, auth_code: str):
         remove_image_from_db(connection, link.filename)
     
     close_connection(connection)
-    if request.method == "POST":
-        return RedirectResponse(request.headers.get('referer') if request.headers.get('referer').startswith(str(request.base_url)) else "/upload", status_code=status.HTTP_303_SEE_OTHER)
-    return RedirectResponse("/upload", status_code=status.HTTP_303_SEE_OTHER)
+    return JSONResponse(
+        content={
+            "success": True,
+            "detail": "Gallery removed.",
+            "category": FlashCategory.SUCCESS.value,
+            },
+        status_code=status.HTTP_200_OK
+        )
 
 
 @router.get('/download/{file_name}')

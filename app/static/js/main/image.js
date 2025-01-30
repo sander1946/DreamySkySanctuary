@@ -22,3 +22,24 @@ const copyToClipboard = async (input_id, button) => {
         // Optional: Handle and display the error to the user
     }
 };
+
+function send_remove_post_request(url) {
+    fetch(url, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        }
+    }).then(res => res.json()).then(data => {
+        if (data.success) {
+            console.log("success");
+            console.log(data);
+            window.location.reload();
+        } else {
+            console.log("failed");
+            console.log(data);
+            showFlashMessage('.main-grid', data.detail, data.category);
+        }
+    }).catch(error => {
+        console.error('Error:', error);
+    });
+};

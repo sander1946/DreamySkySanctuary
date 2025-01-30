@@ -33,15 +33,13 @@ Images
             <div class="col-auto thumb-wrapper">
                 <div class="thumb">
                     <a target="_blank" class="thumb-image" href="/image/{{ image.filename }}/{{ image.auth_code }}" style="background-image: url('{{ image.url }}');"></a>
-                    <form class="remove" method="POST" action="{{ base_url }}/image/remove/{{ image.filename }}/{{ image.auth_code }}">
-                        <a target="_blank" href="/image/{{ image.filename }}/{{ image.auth_code }}" class="custom-hidden-link">
-                            <p class="thumb-name">{{ image.filename }}</p>
-                        </a>
+                    <a target="_blank" href="/image/{{ image.filename }}/{{ image.auth_code }}" class="custom-hidden-link">
+                        <p class="thumb-name">{{ image.filename }}</p>
+                    </a>
 
-                        <a target="_blank" href="/image/{{ image.filename }}/{{ image.auth_code }}" class="btn btn-primary"><i class="bi bi-eye"></i> View</a>
-                        <a target="_blank" href="/image/{{ image.filename }}" class="btn btn-primary"><i class="bi bi-share-fill"></i></a>
-                        <button action="submit" class="btn btn-danger"><i class="bi bi-trash"></i></button>
-                    </form>
+                    <a target="_blank" href="/image/{{ image.filename }}/{{ image.auth_code }}" class="btn btn-primary"><i class="bi bi-eye"></i> View</a>
+                    <a target="_blank" href="/image/{{ image.filename }}" class="btn btn-primary"><i class="bi bi-share-fill"></i></a>
+                    <button class="btn btn-danger"  onclick="send_remove_post_request('{{ base_url }}/image/remove/{{ image.filename }}/{{ image.auth_code }}');"><i class="bi bi-trash"></i></button>
                 </div>
             </div>
             {% endfor %}
