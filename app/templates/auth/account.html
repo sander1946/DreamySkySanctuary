@@ -2,9 +2,9 @@
 
 {% block custom_css %}
 <!-- Bootstrap CSS -->
-<link href="/static/css/bootstrap/bootstrap.min.css" rel="stylesheet" />
-<link rel="stylesheet" href="/static/icons/font/bootstrap-icons.css" />
-<link href="/static/css/auth/account.css" rel="stylesheet" />
+<link href="/static/css/bootstrap/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="/static/icons/font/bootstrap-icons.css">
+<link href="/static/css/auth/account.css" rel="stylesheet">
 {% endblock %} 
 
 {% block title %}
@@ -35,8 +35,17 @@ Account
                 <p class="lead">Created at: {{ user.created_at }}</p>
             </div>
             <div class="account-header-content-item">
+                <span class="">Uploaded images</span>
+            </div>
+            <div class="account-header-content-item">
+                <button class="mb-3 btn btn-success" onclick="window.location.href='/image'">My Images</button>
+                <button class="mb-3 btn btn-success" onclick="window.location.href='/gallery'">My Galleries</button>
+            </div>
+            <div class="account-header-content-item">
                 <button class="mb-3 btn btn-primary" onclick="window.location.href='/account/2fa'">{{ 'Disable' if user.otp_enabled else 'Enable' }} 2FA</button>
-                <button class="mb-3 btn btn-primary" onclick="window.location.href='/logout'">Logout</button>
+            </div>
+            <div class="account-header-content-item">
+                <button class="mb-3 btn btn-danger" onclick="window.location.href='/logout'">Logout</button>
             </div>
         </div>
     </div>
@@ -47,7 +56,7 @@ Account
                 <form id="change-username">
                     <div class="form-group">
                         <label for="username">Username</label>
-                        <input type="username" name="username" id="username" class="form-control" required />
+                        <input type="username" name="username" id="username" class="form-control" required>
                         <button type="submit" class="btn btn-primary">Change</button>
                     </div>
                 </form>
@@ -58,7 +67,7 @@ Account
                 <form id="change-email">
                     <div class="form-group">
                         <label for="email">Email</label>
-                        <input type="email" name="email" id="email" class="form-control" required />
+                        <input type="email" name="email" id="email" class="form-control" required>
                         <button type="submit" class="btn btn-primary">Change</button>
                     </div>
                 </form>
@@ -69,9 +78,9 @@ Account
                 <form id="change-password">
                     <div class="form-group">
                         <label for="password">Password</label>
-                        <input type="password" name="password" id="password" class="form-control" required />
+                        <input type="password" name="password" id="password" class="form-control" required>
                         <label for="password_rep">Repeat Password</label>
-                        <input type="password" name="password_rep" id="password_rep" class="form-control" required />
+                        <input type="password" name="password_rep" id="password_rep" class="form-control" required>
                         <button type="submit" class="btn btn-primary">Change</button>
                     </div>
                 </form>
