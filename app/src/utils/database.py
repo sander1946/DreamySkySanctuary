@@ -103,7 +103,7 @@ def delete_query(connection: PooledMySQLConnection | MySQLConnectionAbstract, qu
 def add_image_to_db(connection: PooledMySQLConnection | MySQLConnectionAbstract, image: ImageData) -> None:
     logger.debug(f"Adding image: `{image.filename}` to the database.")
     query = "INSERT INTO images (filename, auth_code, path, url, filesize, uploaded_by, delete_after) VALUES (%s, %s, %s, %s, %s, %s, %s)"
-    values = (image.filename, image.auth_code, image.path, image.url, image.filesize, image.uploaded_by, image.delete_after.strftime('%Y-%m-%d %H:%M:%S'))
+    values = (image.filename, image.auth_code, image.path, image.url, image.filesize, image.uploaded_by, image.delete_after.strftime('%Y-%m-%d %H:%M:%S') if image.delete_after else None)
     insert_query(connection, query, values)
 
 
@@ -137,7 +137,7 @@ def remove_image_from_db(connection: PooledMySQLConnection | MySQLConnectionAbst
 def add_gallery_to_db(connection: PooledMySQLConnection | MySQLConnectionAbstract, gallery: GalleryData) -> None:
     logger.debug(f"Adding gallery: `{gallery.gallery_code}` to the database.")
     query = "INSERT INTO galleries (gallery_code, auth_code, uploaded_by, delete_after) VALUES (%s, %s, %s, %s)"
-    values = (gallery.gallery_code, gallery.auth_code, gallery.uploaded_by, gallery.delete_after.strftime('%Y-%m-%d %H:%M:%S'))
+    values = (gallery.gallery_code, gallery.auth_code, gallery.uploaded_by, gallery.delete_after.strftime('%Y-%m-%d %H:%M:%S') if gallery.delete_after else None)
     insert_query(connection, query, values)
 
 
