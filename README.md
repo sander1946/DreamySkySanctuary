@@ -1,3 +1,6 @@
+# **!!!! This Repo has moved to [Dreamy-Sky-Sanctuary/DreamySkySanctuary.com](https://github.com/Dreamy-Sky-Sanctuary/DreamySkySanctuary.com) !!!!** 
+
+
 # DreamySkySanctuary
 
 The Website for the Dreamy Sky Sanctuary server
